@@ -1,0 +1,64 @@
+<div id="divCustomers" class="container mt-4">
+    <h1 class="mb-4">Customer List</h1>
+    
+    <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+    <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
+
+    <!-- Filter Form -->
+    <form method="GET" action="{{ url_for('frontend.customers') }}" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="text" name="name" class="form-control" placeholder="Filter by name" value="{{ request.args.get('name', '') }}">
+            </div>
+            <div class="col-md-4">
+                <input type="text" name="last_name" class="form-control" placeholder="Filter by last name" value="{{ request.args.get('last_name', '') }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary mb-2 mb-sm-0">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Customers Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th style="width: 1%; white-space: nowrap;"></th>
+                    <th>Name</th>
+                    <th>Last name</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if customers %}
+                    {% for customer in customers %}
+                        <tr class="selectable-row" data-id="{{ customer.id }}">
+                            <td class="d-flex flex-column flex-sm-row text-center" style="white-space: nowrap;">
+                                <!-- Action buttons with Font Awesome icons -->
+                                <button  style="margin-right: 10px" class="btn btn-primary mb-2 mb-sm-0" onclick='handleAction("check_in", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
+                                    <i class="fas fa-check"></i> <!-- Edit icon -->
+                                </button>
+                                <button  style="margin-right: 10px" class="btn btn-warning mb-2 mb-sm-0" onclick='handleAction("resend_qr", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
+                                    <i class="fas fa-at"></i> <!-- View icon -->
+                                </button>
+                                <button class="btn btn-danger" onclick='handleAction("delete", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
+                                    <i class="fas fa-trash"></i> <!-- Delete icon -->
+                                </button>
+                            </td>
+                            <td>{{ customer.name }}</td>
+                            <td>{{ customer.last_name }}</td>
+                            <td>{{ customer.email }}</td>
+                            <td>{{ customer.address }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="2" class="text-center">No customers found.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+Flask
+python-dotenv
+psycopg2-binary
+sqlalchemy
+pydantic
+qrcode[pil]
+requests
+pillow

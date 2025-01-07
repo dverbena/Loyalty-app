@@ -1,0 +1,6 @@
+services:
+  app:
+    volumes:
+      - ./app:/usr/src/app
+    environment:
+      - FLASK_ENV=development
