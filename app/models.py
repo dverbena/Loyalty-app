@@ -76,7 +76,7 @@ class Program(Base):
         self.valid_to = valid_to
         self.num_access_to_trigger = num_access_to_trigger
         self.num_accesses_reward = num_accesses_reward
-   
+
 # Define Pydantic models for request data validation
 class IDQuery(BaseModel):
     id: int = Field(..., description="ID")
@@ -90,6 +90,7 @@ class CustomerCreateRequest(BaseModel):
     last_name: str = Field(..., description="Last name of the customer")
     email: str = Field(..., description="Email address of the customer")
     address: Optional[str] = Field(None, description="Address of the customer")
+    programs: Optional[list[int]] = Field(None, description="List of program IDs")
 
 class QRCodeRequest(BaseModel):
     qr_code: str = Field(..., min_length=1, max_length=256, description="QR code of the customer")

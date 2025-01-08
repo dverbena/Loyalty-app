@@ -60,28 +60,14 @@ def log_access_endpoint():
         }
     }), 200
     
-@bp.route('/customer/id', methods=['GET'])
-def get_access_logs_endpoint():
-    logger.info("Received request to fetch accesses by customer id")
-    
-    # Validate query parameters with Pydantic
-    try:
-        # Validate the query parameters using Pydantic
-        logger.debug("Validating search query parameters.")
-        query_params = IDQuery(
-            id=request.args.get("customer_id")
-        )
-        logger.debug(f"Validated query parameters: {query_params.dict()}")
-    except ValidationError as e:
-        logger.error(f"Invalid query parameters: {str(e)}")
-        return jsonify({"error": str(e)}), 400
-
-    logger.info(f"Fetching accesses for customer_id: {query_params.id}")
+@bp.route('/customer/<id>', methods=['GET'])
+def get_access_logs_endpoint(id):
+    logger.info(f"Fetching accesses for customer_id: {id}")
 
     db = next(get_db())
-    logs = get_access_logs(db, query_params.id)
+    logs = get_access_logs(db, id)
     
-    logger.debug(f"Fetched {len(logs)} accesses for customer_id: {query_params.id}")
+    logger.debug(f"Fetched {len(logs)} accesses for customer_id: {id}")
 
     return jsonify([{
         "id": log.id,
@@ -109,3 +95,37 @@ def get_access_logs_by_qr(qr_code):
         "customer_id": log.customer_id,
         "access_time": log.access_time
     } for log in logs]), 200
+
+@bp.route("/reward_due/<cid>", methods=["GET"])
+def is_customer_reward_due(cid):
+    logger.info(f"Checking if customer {cid} is due for a reward")
+
+    db = next(get_db())
+    reward_due = is_reward_due(db, cid)
+
+    logger.debug(f"Customer {cid} is {'' if reward_due else 'NOT '}due a reward")
+
+    return jsonify({
+        "customer_id": cid,
+        "reward_due": reward_due
+    }), 200
+
+@bp.route("/reward_due_qr/<qr>", methods=["GET"])
+def is_customer_reward_due_qr(qr):
+    logger.info(f"Checking if customer {qr} is due for a reward")
+
+    db = next(get_db())    
+    customer = db.query(Customer).filter(Customer.qr_code == qr).first()
+
+    if not customer:
+        logger.error(f"Customer not found for QR code: {qr}")
+        return jsonify({"error": "Customer not found"}), 404
+    
+    reward_due = is_reward_due(db, customer.id)
+
+    logger.debug(f"Customer {qr} is {'' if reward_due else 'NOT '}due a reward")
+
+    return jsonify({
+        "customer_id": customer.id,
+        "reward_due": reward_due
+    }), 200

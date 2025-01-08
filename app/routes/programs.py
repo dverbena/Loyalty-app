@@ -28,6 +28,25 @@ def list_programs():
         "num_accesses_reward": program.num_accesses_reward,
         "created_at": program.created_at
     } for program in programs])
+
+@bp.route("/current", methods=["GET"])
+def list_current_programs():
+    logger.info("Received request to list all current programs.")
+
+    db = next(get_db())
+    programs = get_current_programs(db)
+    
+    logger.debug(f"Fetched {len(programs)} current programs from the database.")
+
+    return jsonify([{
+        "id": program.id,
+        "name": program.name,
+        "valid_from": program.valid_from,
+        "valid_to": program.valid_to,
+        "num_access_to_trigger": program.num_access_to_trigger,
+        "num_accesses_reward": program.num_accesses_reward,
+        "created_at": program.created_at
+    } for program in programs])
     
 @bp.route('/<int:id>', methods=['GET'])
 def get_program_by_id(id):    

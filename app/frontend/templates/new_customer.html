@@ -1,34 +1,42 @@
 <div class="container mt-4">
-    <h1 class="mb-4">Create Customer</h1>
+    <h1 class="mb-4">Nuovo socio</h1>
 
     <!-- Error Message Display -->
     <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+    <form id="customerForm" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label for="name">Nome</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group mb-3">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" class="form-control" required>
-            </div>
+                <div class="form-group mb-3">
+                    <label for="last_name">Cognome</label>
+                    <input type="text" id="last_name" name="last_name" class="form-control" required>
+                </div>
 
-            <div class="form-group mb-3">
-                <label for="last_name">Last name</label>
-                <input type="text" id="last_name" name="last_name" class="form-control" required>
-            </div>
+                <div class="form-group mb-3">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
 
-            <div class="form-group mb-3">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" class="form-control" required>
-            </div>
+                <div class="form-group mb-3">
+                    <label for="address">Indirizzo</label>
+                    <input type="text" id="address" name="address" class="form-control">
+                </div>
 
-            <div class="form-group mb-3">
-                <label for="address">Address</label>
-                <input type="text" id="address" name="address" class="form-control" required>
-            </div>
+                <div class="form-group mb-3">
+                    <label for="programs">Programmi fedelt&agrave;</label>
+                    <select id="programs" name="programs" class="form-control" multiple>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
 
-            <div class="form-group text-center">
-                <input type="button" id="submitBtn" onclick="submit_new_customer();" value="Create customer" class="btn btn-primary btn-lg w-100">
+                <div class="form-group text-center">
+                    <input type="submit" id="submitBtn" value="Crea nuovo socio" class="btn btn-primary btn-lg w-100">
+                </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>

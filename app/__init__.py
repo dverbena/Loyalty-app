@@ -2,8 +2,16 @@ from flask import Flask
 from app.database import init_db  # Import the database initialization function
 from app.routes import customers, accesses, programs
 from app.frontend import routes as frontend_routes
+from datetime import datetime
 import logging
 import os
+
+def format_db_date(value: str, date_format: str = '%d/%m/%Y'):
+    # Convert string to datetime object and return the formatted date
+    date_obj = datetime.strptime(value, '%a, %d %b %Y %H:%M:%S GMT')
+    return date_obj.strftime(date_format)
+
+# Register the filter with your Jinja2 environment
 
 def create_app():
     app = Flask(__name__)    
@@ -35,4 +43,6 @@ def create_app():
     app.secret_key = os.urandom(24)
     app.config['DEBUG'] = True
     
+    app.jinja_env.filters['format_date'] = format_db_date
+
     return app

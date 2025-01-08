@@ -1,34 +1,36 @@
+
+<div id="reward" class="alert alert-success mt-3" style="display: none;"><h1>Ingresso gratuito!</h1></div>
 <div id="divCustomers" class="container mt-4">
-    <h1 class="mb-4">Customer List</h1>
+    <h1 class="mb-4">Elenco soci</h1>
     
     <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
     <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
 
     <!-- Filter Form -->
-    <form method="GET" action="{{ url_for('frontend.customers') }}" class="mb-4">
+    <form id="filterForm" class="mb-4">
         <div class="row">
             <div class="col-md-4">
-                <input type="text" name="name" class="form-control" placeholder="Filter by name" value="{{ request.args.get('name', '') }}">
+                <input id="filterName" type="text" name="name" class="form-control" placeholder="Filtra per nome" value="{{ request.args.get('name', '') }}">
             </div>
             <div class="col-md-4">
-                <input type="text" name="last_name" class="form-control" placeholder="Filter by last name" value="{{ request.args.get('last_name', '') }}">
+                <input id="filterLastName" type="text" name="last_name" class="form-control" placeholder="Filtra per cognome" value="{{ request.args.get('last_name', '') }}">
             </div>
             <div class="col-md-4">
-                <button type="submit" class="btn btn-primary mb-2 mb-sm-0">Filter</button>
+                <input type="submit" id="submitBtn" value="Filtra" class="btn btn-primary mb-2 mb-sm-0">
             </div>
         </div>
     </form>
 
     <!-- Customers Table -->
     <div class="table-responsive">
-        <table class="table table-bordered table-striped" style="width: 100%;">
+        <table id="customers_table" class="table table-bordered table-striped" style="width: 100%;">
             <thead>
                 <tr>
                     <th style="width: 1%; white-space: nowrap;"></th>
-                    <th>Name</th>
-                    <th>Last name</th>
+                    <th>Nome</th>
+                    <th>Cognome</th>
                     <th>Email</th>
-                    <th>Address</th>
+                    <th>Indirizzo</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,13 +39,16 @@
                         <tr class="selectable-row" data-id="{{ customer.id }}">
                             <td class="d-flex flex-column flex-sm-row text-center" style="white-space: nowrap;">
                                 <!-- Action buttons with Font Awesome icons -->
-                                <button  style="margin-right: 10px" class="btn btn-primary mb-2 mb-sm-0" onclick='handleAction("check_in", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
+                                <button title="Check in" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("check_in", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
                                     <i class="fas fa-check"></i> <!-- Edit icon -->
                                 </button>
-                                <button  style="margin-right: 10px" class="btn btn-warning mb-2 mb-sm-0" onclick='handleAction("resend_qr", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
+                                <button title="Rimanda QR code" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("resend_qr", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
                                     <i class="fas fa-at"></i> <!-- View icon -->
                                 </button>
-                                <button class="btn btn-danger" onclick='handleAction("delete", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
+                                <button title="Mostra ingressi" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("access_logs", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
+                                    <i class="fas fa-history"></i>
+                                </button>
+                                <button title="Elimina" class="btn btn-danger mb-2 mb-sm-0" onclick='handleAction("delete", {{ customer.id }}, {{ customer.name|tojson }}, {{ customer.last_name|tojson }})'>
                                     <i class="fas fa-trash"></i> <!-- Delete icon -->
                                 </button>
                             </td>
@@ -55,10 +60,36 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="2" class="text-center">No customers found.</td>
+                        <td colspan="5" class="text-center">Nessun socio trovato</td>
                     </tr>
                 {% endif %}
             </tbody>
         </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="accessLogsModal" tabindex="-1" role="dialog" aria-labelledby="accessLogsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accessLogsModalLabel">Ingressi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped" id="accessLogsTable">
+                        <thead>
+                            <tr>
+                                <th>Orario ingresso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Access logs will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

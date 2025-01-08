@@ -1,0 +1,40 @@
+<div id="divPrograms" class="container mt-4">
+    <h1 class="mb-4">Program list</h1>
+    
+    <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+    <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
+
+    <!-- Filter Form -->
+
+    <!-- Programs Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Valido dal</th>
+                    <th>Valido fino al</th>
+                    <th>Ingressi per ottenere premio</th>                    
+                    <th>Ingressi omaggio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if programs %}
+                    {% for program in programs %}
+                        <tr class="selectable-row" data-id="{{ program.id }}">                            
+                            <td>{{ program.name }}</td>
+                            <td>{{ program.valid_from | format_date }}</td>
+                            <td>{{ program.valid_to | format_date }}</td>
+                            <td>{{ program.num_access_to_trigger }}</td>
+                            <td>{{ program.num_accesses_reward }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">Nessun programam fedelt&agrave; trovato</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>

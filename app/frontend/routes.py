@@ -56,9 +56,22 @@ def customers():
     else:
         customers = []
         
-    logger.debug("Customers data:", customers)
-
     return render_template('customers.html', customers=customers)
+
+
+# Programs search handler
+@bp.route('/programs')
+def programs():
+    response = requests.get(f'{BACKEND_API_URL}/programs/all')
+
+    if response.status_code == 200:
+        programs = response.json()
+    else:
+        programs = []
+        
+    logger.debug("Programs data:", customers)
+
+    return render_template('programs.html', programs=programs)
 
 @bp.route('/scan')
 def scan():

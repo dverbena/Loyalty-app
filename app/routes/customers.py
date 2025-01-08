@@ -118,26 +118,27 @@ def get_customers_by_name():
         logger.error(f"Invalid query parameters: {str(e)}")
         return jsonify({"error": str(e)}), 400
 
-    # Ensure at least one parameter is provided
-    if not query_params.name and not query_params.last_name:
-        logger.error("Neither 'name' nor 'last_name' was provided.")
-        return jsonify({"error": "At least one of 'name' or 'last_name' must be provided."}), 400
+    # # Ensure at least one parameter is provided
+    # if not query_params.name and not query_params.last_name:
+    #     logger.error("Neither 'name' nor 'last_name' was provided.")
+    #     return jsonify({"error": "At least one of 'name' or 'last_name' must be provided."}), 400
 
     db = next(get_db())
 
+    if not query_params.name and not query_params.last_name:
+        return list_customers()
+    
+    logger.debug(f"Searching for customers with name containing: {query_params.name}")
+    
     # Build the query based on the available parameters
     query = db.query(Customer)
     if query_params.name:
-        query = query.filter(Customer.name == query_params.name)
+        query = query.filter(Customer.name.ilike(f"%{query_params.name}%"))
     if query_params.last_name:
-        query = query.filter(Customer.last_name == query_params.last_name)
+        query = query.filter(Customer.last_name.ilike(f"%{query_params.last_name}%"))
 
     customers = query.all()
-
-    if not customers:
-        logger.warning(f"No customers found matching the search criteria.")
-        return jsonify({"error": "No customers found"}), 404
-
+    
     logger.info(f"Found {len(customers)} customers matching the search criteria.")
 
     return jsonify([{
@@ -166,7 +167,7 @@ def create_new_customer():
 
     try:
         db = next(get_db())
-        customer = create_customer(db, data.name, data.last_name, data.email, data.address)
+        customer = create_customer(db, data.name, data.last_name, data.email, data.address, data.programs)
 
         logger.info(f"Created new customer with ID: {customer.id}, Name: {customer.name} {customer.last_name}")
 
