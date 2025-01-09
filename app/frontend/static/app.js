@@ -73,25 +73,6 @@ const navigateTo = (page) => {
     window.location.hash = `#${page}`;
 };
 
-const startScan = () => {
-    if (!AppState.html5QrcodeScanner) {
-        console.error("QR scanner not initialized.");
-        return;
-    }
-
-    if (AppState.html5QrcodeScanner.isScanning) {
-        return; // Prevent duplicate scanning sessions
-    }
-
-    AppState.html5QrcodeScanner
-        .start(
-            AppState.deviceId,
-            { fps: 10, qrbox: 250 },
-            (decodedText) => handleScan(decodedText)
-        )
-        .catch((err) => alert(`Failed to start scan: ${err}`));
-};
-
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js')

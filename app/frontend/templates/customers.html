@@ -9,10 +9,10 @@
     <!-- Filter Form -->
     <form id="filterForm" class="mb-4">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4" style="margin-bottom: 5px">
                 <input id="filterName" type="text" name="name" class="form-control" placeholder="Filtra per nome" value="{{ request.args.get('name', '') }}">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" style="margin-bottom: 5px">
                 <input id="filterLastName" type="text" name="last_name" class="form-control" placeholder="Filtra per cognome" value="{{ request.args.get('last_name', '') }}">
             </div>
             <div class="col-md-4">
