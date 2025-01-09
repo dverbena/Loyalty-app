@@ -42,14 +42,15 @@ const startScan = () => {
             .catch((err) => alert(`Failed to start scan: ${err}`));
         }); // Prevent duplicate scanning sessions
     }
-
-    AppState.html5QrcodeScanner
-        .start(
-            AppState.deviceId,
-            { fps: 10, qrbox: 250 },
-            (decodedText) => handleScan(decodedText)
-        )
-        .catch((err) => alert(`Failed to start scan: ${err}`));
+    else {
+        AppState.html5QrcodeScanner
+            .start(
+                AppState.deviceId,
+                { fps: 10, qrbox: 250 },
+                (decodedText) => handleScan(decodedText)
+            )
+            .catch((err) => alert(`Failed to start scan: ${err}`));
+    }
 };
 
 const initializeCameraDropDown = () => {
