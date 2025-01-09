@@ -51,12 +51,12 @@ const initializeCamera = () => {
                         }
     
                         // Save initial selection to cookie
-                        setCookie('selectedCamera', cameraId, 30);
+                        setCookie('selectedCamera', AppState.deviceId, 30);
     
                         // Handle dropdown change event
                         dropdown.addEventListener('change', (event) => {
                             AppState.deviceId = event.target.value;
-                            setCookie('selectedCamera', cameraId, 30); // Save selected camera to cookie
+                            setCookie('selectedCamera', AppState.deviceId, 30); // Save selected camera to cookie
                         });
                         
                         AppState.html5QrcodeScanner = new Html5Qrcode("qr-reader");
