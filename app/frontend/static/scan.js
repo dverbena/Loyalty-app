@@ -16,6 +16,8 @@ function getCookie(name) {
     return null;
 }
 
+const stopScanning = () => { return AppState.html5QrcodeScanner.stop(); }
+
 const startScan = () => {
     if (!AppState.html5QrcodeScanner) {
         console.error("QR scanner not initialized.");
@@ -68,7 +70,7 @@ const initializeCameraDropDown = () => {
                 AppState.deviceId = event.target.value;
                 setCookie('selectedCamera', AppState.deviceId, 30); // Save selected camera to cookie
 
-                AppState.html5QrcodeScanner.stop().then(() => { startScan(); })
+                stopScanning().then(() => { startScan(); })
             });
         }
     })
@@ -102,7 +104,7 @@ const initializeCamera = () => {
 const handleScan = (decodedText) => {
     console.log("Scanned QR Code:", decodedText);
 
-    AppState.html5QrcodeScanner.stop().then(() => {        
+    stopScanning().then(() => {        
         $.ajax({
             type: 'GET',
             url: `accesses/reward_due_qr/${decodedText}`,
