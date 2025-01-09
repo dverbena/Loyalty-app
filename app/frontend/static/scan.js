@@ -76,6 +76,8 @@ const initializeCamera = () => {
                         dropdown.addEventListener('change', (event) => {
                             AppState.deviceId = event.target.value;
                             setCookie('selectedCamera', AppState.deviceId, 30); // Save selected camera to cookie
+
+                            AppState.html5QrcodeScanner.stop().then(() => { startScan(); })
                         });
                         
                         AppState.html5QrcodeScanner = new Html5Qrcode("qr-reader");
