@@ -1,4 +1,20 @@
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/`;
+}
 
+// Function to get a cookie by name
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(`${name}=`)) {
+            return cookie.substring(name.length + 1);
+        }
+    }
+    return null;
+}
 
 // Initialize Camera (Lazy Load)
 const initializeCamera = () => {
@@ -11,10 +27,40 @@ const initializeCamera = () => {
         script.onload = () => {
             Html5Qrcode.getCameras()
                 .then((devices) => {
-                    if (devices && devices.length) {
+                    const dropdown = document.getElementById('cameraDropdown');
+                    
+                    if (devices && devices.length) {                        
+                        // Get saved camera ID from cookie
+                        const savedCameraId = getCookie('selectedCamera');
+    
+                        // Populate dropdown and set default selection
+                        devices.forEach((device, index) => {
+                            const option = document.createElement('option');
+                            option.value = device.id;
+                            option.textContent = device.label || `Camera ${index + 1}`;
+                            dropdown.appendChild(option);
+                        });
+    
+                        // Set dropdown to saved camera or first option
+                        if (savedCameraId && devices.some(d => d.id === savedCameraId)) {
+                            dropdown.value = savedCameraId;
+                            AppState.deviceId = savedCameraId;
+                        } else {
+                            dropdown.value = devices[0].id;
+                            AppState.deviceId = devices[0].id;
+                        }
+    
+                        // Save initial selection to cookie
+                        setCookie('selectedCamera', cameraId, 30);
+    
+                        // Handle dropdown change event
+                        dropdown.addEventListener('change', (event) => {
+                            AppState.deviceId = event.target.value;
+                            setCookie('selectedCamera', cameraId, 30); // Save selected camera to cookie
+                        });
+                        
                         AppState.html5QrcodeScanner = new Html5Qrcode("qr-reader");
                         AppState.cameraInitialized = true;
-                        AppState.deviceId = devices[3].id;
 
                         startScan();
                     }
