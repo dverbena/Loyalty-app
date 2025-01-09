@@ -35,58 +35,61 @@ const startScan = () => {
         .catch((err) => alert(`Failed to start scan: ${err}`));
 };
 
+const initializeCameraDropDown = () => {
+    Html5Qrcode.getCameras().then((devices) => {
+        const dropdown = document.getElementById('cameraDropdown');
+        
+        if (devices && devices.length) {                        
+            // Get saved camera ID from cookie
+            const savedCameraId = getCookie('selectedCamera');
+
+            // Populate dropdown and set default selection
+            devices.forEach((device, index) => {
+                const option = document.createElement('option');
+                option.value = device.id;
+                option.textContent = device.label || `Camera ${index + 1}`;
+                dropdown.appendChild(option);
+            });
+
+            // Set dropdown to saved camera or first option
+            if (savedCameraId && devices.some(d => d.id === savedCameraId)) {
+                dropdown.value = savedCameraId;
+                AppState.deviceId = savedCameraId;
+            } else {
+                dropdown.value = devices[0].id;
+                AppState.deviceId = devices[0].id;
+            }
+
+            // Save initial selection to cookie
+            setCookie('selectedCamera', AppState.deviceId, 30);
+
+            // Handle dropdown change event
+            dropdown.addEventListener('change', (event) => {
+                AppState.deviceId = event.target.value;
+                setCookie('selectedCamera', AppState.deviceId, 30); // Save selected camera to cookie
+
+                AppState.html5QrcodeScanner.stop().then(() => { startScan(); })
+            });
+        }
+    })
+    .catch((err) => alert(`Camera initialization error: ${err}`));
+}
+
 // Initialize Camera (Lazy Load)
 const initializeCamera = () => {
+    initializeCameraDropDown();
+    
     if (!AppState.cameraInitialized) {
         // Lazy load the Html5Qrcode library
         const script = document.createElement('script');
         script.src = "https://unpkg.com/html5-qrcode";
         document.body.appendChild(script);
 
-        script.onload = () => {
-            Html5Qrcode.getCameras()
-                .then((devices) => {
-                    const dropdown = document.getElementById('cameraDropdown');
-                    
-                    if (devices && devices.length) {                        
-                        // Get saved camera ID from cookie
-                        const savedCameraId = getCookie('selectedCamera');
-    
-                        // Populate dropdown and set default selection
-                        devices.forEach((device, index) => {
-                            const option = document.createElement('option');
-                            option.value = device.id;
-                            option.textContent = device.label || `Camera ${index + 1}`;
-                            dropdown.appendChild(option);
-                        });
-    
-                        // Set dropdown to saved camera or first option
-                        if (savedCameraId && devices.some(d => d.id === savedCameraId)) {
-                            dropdown.value = savedCameraId;
-                            AppState.deviceId = savedCameraId;
-                        } else {
-                            dropdown.value = devices[0].id;
-                            AppState.deviceId = devices[0].id;
-                        }
-    
-                        // Save initial selection to cookie
-                        setCookie('selectedCamera', AppState.deviceId, 30);
-    
-                        // Handle dropdown change event
-                        dropdown.addEventListener('change', (event) => {
-                            AppState.deviceId = event.target.value;
-                            setCookie('selectedCamera', AppState.deviceId, 30); // Save selected camera to cookie
+        script.onload = () => {            
+            AppState.html5QrcodeScanner = new Html5Qrcode("qr-reader");
+            AppState.cameraInitialized = true;
 
-                            AppState.html5QrcodeScanner.stop().then(() => { startScan(); })
-                        });
-                        
-                        AppState.html5QrcodeScanner = new Html5Qrcode("qr-reader");
-                        AppState.cameraInitialized = true;
-
-                        startScan();
-                    }
-                })
-                .catch((err) => alert(`Camera initialization error: ${err}`));
+            startScan();
         };
 
         script.onerror = () => { alert("Failed to load QR scanner library. Please try again later."); };
