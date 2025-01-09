@@ -5,7 +5,8 @@ var AppSession = {
     semaphore: {info: false, error: false },
     rewardBannerTimer: null,
     showRewardBanner: false,
-    rewardSempahore: false
+    rewardSempahore: false,
+    customerBeingEdited: null
 };
 
 const AppState = {
@@ -43,7 +44,8 @@ const navigateTo = (page) => {
                         event.preventDefault();
                         filterCustomers(event);
                     });
-    
+                    
+                    filterCustomers();
                     startMessagesTimer();
                     startRewardBannerTimer();
                 }
@@ -61,7 +63,8 @@ const navigateTo = (page) => {
                             validateAndSubmitNewCustomer(event);
                         });
                         
-                        populateProgramsForNewCustomer();
+                        setNewCustomerBehavior();
+                        populateProgramsForCustomer();
                     }
                 }
             });

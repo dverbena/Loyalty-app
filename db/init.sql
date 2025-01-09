@@ -44,21 +44,21 @@ BEGIN
     -- Check if the customer is already assigned to a program that overlaps with the new program
     IF EXISTS (
         SELECT 1
-        FROM NEW n
-        JOIN programs pnew ON n.program_id = pnew.program_id
-        JOIN customer_program cpold ON n.customer_id = cpold.customer_id 
-        JOIN programs pold ON cpold.program_id = pold.id 
-        AND (
-            -- Overlap cases:
-            -- Case 1: Existing program starts before and ends during the new program
-            (pold.valid_from < pnew.valid_to AND pold.valid_to >= pnew.valid_from)
-            -- Case 2: Existing program is entirely within the new program
-            OR (pold.valid_from >= pnew.valid_from AND p.valid_to <= pnew.valid_to)
-            -- Case 3: Existing program starts during and ends after the new program
-            OR (pold.valid_from <= pnew.valid_to AND p.valid_to > pnew.valid_from)
-            -- Case 4: Existing program completely envelops the new program
-            OR (pold.valid_from <= pnew.valid_from AND p.valid_to >= pnew.valid_to)
-        )
+        FROM customer_program cpold
+        JOIN programs pold ON cpold.program_id = pold.id
+        JOIN programs pnew ON NEW.program_id = pnew.id
+        WHERE cpold.customer_id = NEW.customer_id
+          AND (
+              -- Overlap cases:
+              -- Case 1: Existing program starts before and ends during the new program
+              (pold.valid_from < pnew.valid_to AND pold.valid_to >= pnew.valid_from)
+              -- Case 2: Existing program is entirely within the new program
+              OR (pold.valid_from >= pnew.valid_from AND pold.valid_to <= pnew.valid_to)
+              -- Case 3: Existing program starts during and ends after the new program
+              OR (pold.valid_from <= pnew.valid_to AND pold.valid_to > pnew.valid_from)
+              -- Case 4: Existing program completely envelops the new program
+              OR (pold.valid_from <= pnew.valid_from AND pold.valid_to >= pnew.valid_to)
+          )
     ) THEN
         RAISE EXCEPTION 'The customer is already assigned to a program with overlapping dates';
     END IF;

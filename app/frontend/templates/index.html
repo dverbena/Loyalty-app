@@ -40,6 +40,19 @@
             background-color: #575d63;
         }
 
+        #sidebar .navbar-nav ul {
+            list-style-type: none; /* Remove default bullet points */
+            padding-left: 20px;    /* Indent sub-items */
+        }
+
+        #sidebar .navbar-nav ul li a {
+            color: white;        /* Lighter color for sub-items */
+        }
+
+        #sidebar .navbar-nav ul li a:hover {
+            color: white;          /* Highlight on hover */
+        }
+
         .hamburger {
             position: absolute;
             top: 20px;
@@ -65,9 +78,11 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" onclick="toggleSidebar(); navigateTo('customers')">Soci</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" onclick="toggleSidebar(); navigateTo('new_customer')">Nuovo socio</a>
+                <ul class="navbar-nav" style="padding-left: 20px;">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="toggleSidebar(); AppSession.customerBeingEdited = null; navigateTo('new_customer')">Nuovo socio</a>
+                    </li>
+                </ul>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" onclick="toggleSidebar(); navigateTo('scan')">Scansiona QR</a>

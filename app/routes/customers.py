@@ -56,7 +56,7 @@ def get_customer_by_id(id):
     
     if not customer:
         logger.warning(f"Customer with id {id} not found.")
-        return jsonify({"error": "Customer not found"}), 404
+        return jsonify({}), 200
     
     logger.info(f"Found customer: {customer.name} {customer.last_name}")
 
@@ -156,7 +156,7 @@ def create_new_customer():
     logger.info("Received request to create a new customer.")
 
     try:
-        data = CustomerCreateRequest(**request.get_json())  # Validate request body using Pydantic
+        data = CustomerCreateEditRequest(**request.get_json())  # Validate request body using Pydantic
         logger.debug(f"Validated customer creation data: {data.dict()}")
     except ValidationError as e:
         logger.error(f"Validation error while creating customer: {str(e)}")
@@ -186,6 +186,62 @@ def create_new_customer():
         logger.error(f"Error while creating customer: {str(e)}")
         return jsonify({
             "error": "An unexpected error occurred while creating the customer.",
+            "details": str(e)
+        }), 500    
+
+@bp.route("/edit/<int:id>", methods=["PUT"])
+def edit_customer(id):
+    logger.info(f"Received request to edit customer with ID: {id}.")
+
+    try:
+        data = CustomerCreateEditRequest(**request.get_json())  # Validate request body using Pydantic
+        logger.debug(f"Validated customer edit data: {data.dict()}")
+    except ValidationError as e:
+        logger.error(f"Validation error while editing customer: {str(e)}")
+        return jsonify({
+            "error": "Invalid data provided",
+            "details": str(e)
+        }), 400
+
+    try:
+        db = next(get_db())
+
+        # Fetch the existing customer
+        customer = db.query(Customer).filter(Customer.id == id).first()
+        if not customer:
+            logger.error(f"Customer with ID {id} not found.")
+            return jsonify({"error": f"Customer with ID {id} not found."}), 404
+
+        email_changed = (customer.email != data.email)
+
+        # Update customer fields
+        customer.name = data.name
+        customer.last_name = data.last_name
+        customer.email = data.email
+        customer.address = data.address
+        
+        # Update the programs (assuming a separate function handles many-to-many updates)
+        update_customer_programs(db, id, data.programs)
+
+        # Commit changes to the database
+        db.commit()
+        logger.info(f"Updated customer with ID: {customer.id}")
+
+        return jsonify({
+            "id": customer.id,
+            "name": customer.name,
+            "last_name": customer.last_name,
+            "email": customer.email,
+            "address": customer.address,
+            "qr_code": customer.qr_code,
+            "created_at": customer.created_at,
+            "email_changed": email_changed
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error while editing customer: {str(e)}")
+        return jsonify({
+            "error": "An unexpected error occurred while editing the customer.",
             "details": str(e)
         }), 500
 

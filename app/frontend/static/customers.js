@@ -16,6 +16,7 @@ const sendRewardMessageToCustomersPage = () => {
 const showRewardBanner = () => { 
     if(!AppSession.rewardSempahore) {
         if(AppSession.showRewardBanner) {
+            AppSession.rewardSempahore = true;
             $("#reward").show();
             $("#divCustomers").hide();
 
@@ -85,7 +86,7 @@ function handleAction(action, id, name, last_name) {
                         data: `{"id": ${id}}`,   // Send the form data as JSON
                         success: function (response) {
                             if(responseReward.reward_due) sendRewardMessageToCustomersPage();
-                            sendMessageToCustomersPage(`Check in di ${response.customer.name} ${response.customer.last_name} riuscito!`);
+                            else sendMessageToCustomersPage(`Check in di ${response.customer.name} ${response.customer.last_name} riuscito!`);
                         },
                         error: function (xhr, status, error) {
                             sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : ""))
@@ -111,6 +112,11 @@ function handleAction(action, id, name, last_name) {
                     sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : ""))
                 }
             });
+
+            break;
+        case 'update':
+            AppSession.customerBeingEdited = id;            
+            navigateTo("new_customer");
 
             break;
         case 'delete':            
@@ -148,7 +154,7 @@ function handleAction(action, id, name, last_name) {
                         });
                     } else {
                         // If no data, display a message
-                        $('#accessLogsTable tbody').append('<tr><td>No access logs found.</td></tr>');
+                        $('#accessLogsTable tbody').append('<tr><td>Nessun accesso effettuato</td></tr>');
                     }
 
                     // Show the modal
@@ -191,6 +197,9 @@ function filterCustomers(event) {
                                 </button>
                                 <button title="Mostra ingressi" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("access_logs", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
                                     <i class="fas fa-history"></i>
+                                </button>
+                                <button title="Modifica" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("update", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
+                                    <i class="fas fa-edit"></i>
                                 </button>
                                 <button title="Elimina" class="btn btn-danger mb-2 mb-sm-0" onclick='handleAction("delete", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
                                     <i class="fas fa-trash"></i> <!-- Delete icon -->

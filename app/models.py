@@ -85,7 +85,7 @@ class CustomerSearchQuery(BaseModel):
     name: Optional[str] = Field(None, description="Name of the customer")
     last_name: Optional[str] = Field(None, description="Last name of the customer")
 
-class CustomerCreateRequest(BaseModel):
+class CustomerCreateEditRequest(BaseModel):
     name: str = Field(..., description="Name of the customer")
     last_name: str = Field(..., description="Last name of the customer")
     email: str = Field(..., description="Email address of the customer")

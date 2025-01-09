@@ -71,6 +71,27 @@ def get_program_by_id(id):
         "created_at": program.created_at
     }), 200
 
+@bp.route('/customer/<int:id>', methods=['GET'])
+def get_customer_by_id(id):    
+    logger.info(f"Fetching programs for customer id: {id}")
+
+    db = next(get_db())
+    programs = db.query(Program).join(
+        Program.customers
+    ).filter(Customer.id == id).all()
+    
+    logger.info(f"Found {len(programs)} for customer {id}")
+
+    return jsonify([{
+        "id": program.id,
+        "name": program.name,
+        "valid_from": program.valid_from,
+        "valid_to": program.valid_to,
+        "num_access_to_trigger": program.num_access_to_trigger,
+        "num_accesses_reward": program.num_accesses_reward,
+        "created_at": program.created_at
+    } for program in programs]), 200
+
 @bp.route("/add", methods=["POST"])
 def create_new_program():
     logger.info("Received request to create a new reward program.")

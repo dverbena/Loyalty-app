@@ -42,20 +42,7 @@ def new_customer():
 
 # Customers search handler
 @bp.route('/customers')
-def customers():
-    name = request.args.get('name', '')
-    last_name = request.args.get('last_name', '')
-
-    if not name and not last_name:
-        response = requests.get(f'{BACKEND_API_URL}/customers/all')
-    else:
-        response = requests.get(f'{BACKEND_API_URL}/customers/search?name={name}&last_name={last_name}')
-
-    if response.status_code == 200:
-        customers = response.json()
-    else:
-        customers = []
-        
+def customers():        
     return render_template('customers.html', customers=customers)
 
 

@@ -195,10 +195,14 @@ def is_reward_due(db: Session, customer_id: int) -> bool:
         if num_accesses == 1: # no access so far, no reward
             return False
         else:
-            logger.debug(f"Found {num_accesses} accesses for customer id {customer_id} in {current_year}")
+            logger.debug(f"Computing access #{num_accesses} for customer id {customer_id} in {current_year}")
 
             # Check if the customer is due for a reward
             reward_cycle = program.num_access_to_trigger + program.num_accesses_reward  
             reward_due_thresholds = range(0, program.num_accesses_reward, 1)
 
-            return any((num_accesses + threshold) % reward_cycle == 0 for threshold in reward_due_thresholds)
+            for threshold in reward_due_thresholds:
+                if (num_accesses + threshold) % reward_cycle == 0:
+                    return True
+
+            return False;
