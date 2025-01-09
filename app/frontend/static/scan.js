@@ -95,7 +95,7 @@ const initializeCamera = () => {
         }
         else
             startScan();
-    }
+    });
 };
 
 // Handle QR Code Scan
