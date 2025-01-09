@@ -16,7 +16,12 @@ function getCookie(name) {
     return null;
 }
 
-const stopScanning = () => { return AppState.html5QrcodeScanner.stop(); }
+const stopScanning = () => { 
+    if(AppState.html5QrcodeScanner)
+        return AppState.html5QrcodeScanner.stop(); 
+
+    return Promise.resolve();
+}
 
 const startScan = () => {
     if (!AppState.html5QrcodeScanner) {
