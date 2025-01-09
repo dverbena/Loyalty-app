@@ -36,35 +36,33 @@ const navigateTo = (page) => {
         .then((html) => {
             contentDiv.innerHTML = html;
 
-            stopScanning().finally(() => { //always stop scanning                
-                // Trigger page-specific logic
-                if(page === 'customers') {
-                    $('#filterForm').on('submit', function(event) {
+            // Trigger page-specific logic
+            if(page === 'customers') {
+                $('#filterForm').on('submit', function(event) {
+                    event.preventDefault();
+                    filterCustomers(event);
+                });
+
+                startMessagesTimer();
+                startRewardBannerTimer();
+            }
+            else 
+            {
+                stopMessagesTimer();
+                stopRewardBannerTimer();
+
+                if (page === 'scan') {
+                    initializeCamera();
+                }
+                else if (page === 'new_customer') {
+                    $('#customerForm').on('submit', function(event) {
                         event.preventDefault();
-                        filterCustomers(event);
+                        validateAndSubmitNewCustomer(event);
                     });
-    
-                    startMessagesTimer();
-                    startRewardBannerTimer();
+                    
+                    populateProgramsForNewCustomer();
                 }
-                else 
-                {
-                    stopMessagesTimer();
-                    stopRewardBannerTimer();
-    
-                    if (page === 'scan') {
-                        initializeCamera();
-                    }
-                    else if (page === 'new_customer') {
-                        $('#customerForm').on('submit', function(event) {
-                            event.preventDefault();
-                            validateAndSubmitNewCustomer(event);
-                        });
-                        
-                        populateProgramsForNewCustomer();
-                    }
-                }
-            });
+            }
         })
         .catch((err) => {
             console.error("Navigation error:", err);
