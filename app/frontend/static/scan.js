@@ -36,7 +36,7 @@ const startScan = () => {
 };
 
 const initializeCameraDropDown = () => {
-    Html5Qrcode.getCameras().then((devices) => {
+    return Html5Qrcode.getCameras().then((devices) => {
         const dropdown = document.getElementById('cameraDropdown');
         
         if (devices && devices.length) {                        
@@ -77,25 +77,25 @@ const initializeCameraDropDown = () => {
 
 // Initialize Camera (Lazy Load)
 const initializeCamera = () => {
-    initializeCameraDropDown();
+    initializeCameraDropDown().then(() => {    
+        if (!AppState.cameraInitialized) {
+            // Lazy load the Html5Qrcode library
+            const script = document.createElement('script');
+            script.src = "https://unpkg.com/html5-qrcode";
+            document.body.appendChild(script);
     
-    if (!AppState.cameraInitialized) {
-        // Lazy load the Html5Qrcode library
-        const script = document.createElement('script');
-        script.src = "https://unpkg.com/html5-qrcode";
-        document.body.appendChild(script);
-
-        script.onload = () => {            
-            AppState.html5QrcodeScanner = new Html5Qrcode("qr-reader");
-            AppState.cameraInitialized = true;
-
+            script.onload = () => {            
+                AppState.html5QrcodeScanner = new Html5Qrcode("qr-reader");
+                AppState.cameraInitialized = true;
+    
+                startScan();
+            };
+    
+            script.onerror = () => { alert("Failed to load QR scanner library. Please try again later."); };
+        }
+        else
             startScan();
-        };
-
-        script.onerror = () => { alert("Failed to load QR scanner library. Please try again later."); };
     }
-    else
-        startScan();
 };
 
 // Handle QR Code Scan
