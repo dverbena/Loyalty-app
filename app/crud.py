@@ -47,12 +47,7 @@ def update_customer_programs(db: Session, customer_id: int, program_ids: list[in
 
     return customer
 
-def create_customer(db: Session, name: str, last_name: str, email: str, address: str = None, programs: list[int] = []):
-    # Ensure the static/qrcodes directory exists
-    qr_code_dir = "static/qrcodes"
-    if not os.path.exists(qr_code_dir):
-        os.makedirs(qr_code_dir)
-    
+def create_customer(db: Session, name: str, last_name: str, email: str, address: str = None, access_import: int = 0, programs: list[int] = []):
     try:
         # Start transaction
         with db.begin():  # Start a transaction with a savepoint
@@ -65,8 +60,12 @@ def create_customer(db: Session, name: str, last_name: str, email: str, address:
             if programs:
                 # Call update_customer_programs within the same transaction
                 update_customer_programs(db, db_customer.id, programs)
+
+            if access_import > 0:
+                for i in range(access_import):
+                    log_access(db, db_customer.id, True, False, False)
             
-            # Return the customer without committing yet
+            db.commit()
             return db_customer
     except (OSError, SQLAlchemyError) as e:
         # Rollback transaction in case of error
@@ -79,7 +78,7 @@ def create_customer(db: Session, name: str, last_name: str, email: str, address:
 def get_customers(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Customer).offset(skip).limit(limit).all()
 
-def log_access(db: Session, identifier):
+def log_access(db: Session, identifier, imported: bool, reward: bool, commit: bool = True):
     # Find the customer
     if isinstance(identifier, str):
         # Treat it as a QR code
@@ -94,18 +93,19 @@ def log_access(db: Session, identifier):
         return None  # Customer not found
 
     # Log the access
-    access_log = AccessLog(customer_id=customer.id, access_time=datetime.now())
+    access_log = AccessLog(customer_id=customer.id, is_imported=imported, is_reward=reward, access_time=datetime.now())
     db.add(access_log)
-    db.commit()
-    db.refresh(access_log)
+    
+    if commit:
+        db.commit()
 
     return customer  # Return customer details for confirmation
 
-def get_access_logs(db: Session, customer_id: int = None):
+def get_access_logs_without_imported(db: Session, customer_id: int = None):
     query = db.query(AccessLog)
 
     if customer_id:
-        query = query.filter(AccessLog.customer_id == customer_id)
+        query = query.filter((AccessLog.customer_id == customer_id) & (AccessLog.is_imported == False))
 
     return query.order_by(AccessLog.access_time.desc()).all()
 

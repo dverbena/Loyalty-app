@@ -1,10 +1,11 @@
-function setNewCustomerBehavior() {      
+function initNewCustomer() {      
     $(document).ready(function() {
         if(AppSession.customerBeingEdited) {
             $('#buttonsCreate').hide();
-            $('#titleNew').hide();
+            $('#titleNew').hide();     
+            $('#access_import_div').hide();
             $('#buttonsEdit').show();  
-            $('#titleEdit').show();      
+            $('#titleEdit').show();       
 
             $.ajax({
                 type: 'GET',
@@ -17,7 +18,7 @@ function setNewCustomerBehavior() {
                 },
                 error: function (xhr, status, error) {
                     // If there is an error, display the error message on the page
-                    errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : "");
+                    errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
                     $('#error-message').text(errorMessage).show();
 
                     setTimeout(function () {
@@ -28,7 +29,8 @@ function setNewCustomerBehavior() {
         }
         else  {
             $('#buttonsCreate').show();
-            $('#titleNew').show();
+            $('#titleNew').show();     
+            $('#access_import_div').show();
             $('#buttonsEdit').hide(); 
             $('#titleEdit').hide();    
         }
@@ -71,7 +73,7 @@ function populateProgramsForCustomer() {
                         },
                         error: function (xhr, status, error) {
                             // If there is an error, display the error message on the page
-                            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : "");
+                            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
                             $('#error-message').text(errorMessage).show();
 
                             setTimeout(function () {
@@ -116,6 +118,9 @@ function submit_new_or_modify_customer() {
         programs: selectedPrograms
     };
 
+    if(!AppSession.customerBeingEdited)        
+        formData.access_import = parseInt($('#access_import').val());
+
     $.ajax({
         type: AppSession.customerBeingEdited ? 'PUT' : 'POST',
         url: AppSession.customerBeingEdited ? `customers/edit/${AppSession.customerBeingEdited}` : '/customers/add',
@@ -134,12 +139,14 @@ function submit_new_or_modify_customer() {
             //create a message to be shown by the customers page
             sendMessageToCustomersPage(`Socio ${formData.name} ${formData.last_name} ` + (AppSession.customerBeingEdited ? 'modificato' : 'creato') + ' correttamente');
 
+            AppSession.customerBeingEdited = null;
+            
             // If the customer is created/updated successfully, redirect to the customer list or show a success message
             navigateTo('customers');
         },
         error: function (xhr, status, error) {
             // If there is an error, display the error message on the page
-            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : "");
+            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
             $('#error-message').text(errorMessage).show();
 
             setTimeout(function () {

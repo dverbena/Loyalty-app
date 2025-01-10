@@ -83,18 +83,18 @@ function handleAction(action, id, name, last_name) {
                         type: 'POST',
                         url: 'accesses/add',
                         contentType: 'application/json',
-                        data: `{"id": ${id}}`,   // Send the form data as JSON
+                        data: `{"id": ${id}, "imported": false, "reward": ${responseReward.reward_due}}`,   // Send the form data as JSON
                         success: function (response) {
                             if(responseReward.reward_due) sendRewardMessageToCustomersPage();
                             else sendMessageToCustomersPage(`Check in di ${response.customer.name} ${response.customer.last_name} riuscito!`);
                         },
                         error: function (xhr, status, error) {
-                            sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : ""))
+                            sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : ""))
                         }
                     });
                 },
                 error: function (xhr, status, error) {
-                    sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : ""))
+                    sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : ""))
                 }
             });
             
@@ -109,7 +109,7 @@ function handleAction(action, id, name, last_name) {
                     sendMessageToCustomersPage(`QR mandato a ${response.customer.name} ${response.customer.last_name}`);
                 },
                 error: function (xhr, status, error) {
-                    sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : ""))
+                    sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : ""))
                 }
             });
 
@@ -131,7 +131,7 @@ function handleAction(action, id, name, last_name) {
                         $(`tr[data-id="${id}"]`).remove();
                     },
                     error: function (xhr, status, error) {
-                        sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : ""))
+                        sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : ""))
                     }
                 });
             }
@@ -218,7 +218,7 @@ function filterCustomers(event) {
         },
         error: function (xhr, status, error) {
             // If there is an error, display the error message on the page
-            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.details ? xhr.responseJSON.details : "");            
+            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");            
             sendErrorMessageToCustomersPage(errorMessage);
         }
     });

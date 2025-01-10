@@ -11,6 +11,7 @@
         <table class="table table-bordered table-striped" style="width: 100%;">
             <thead>
                 <tr>
+                    <th style="width: 1%; white-space: nowrap;"></th>
                     <th>Nome</th>
                     <th>Valido dal</th>
                     <th>Valido fino al</th>
@@ -21,7 +22,15 @@
             <tbody>
                 {% if programs %}
                     {% for program in programs %}
-                        <tr class="selectable-row" data-id="{{ program.id }}">                            
+                        <tr class="selectable-row" data-id="{{ program.id }}">
+                            <td class="d-flex flex-column flex-sm-row text-center" style="white-space: nowrap;">
+                                <button title="Modifica" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleActionProgram("update", {{program.id}}, "{{program.name}}")'>
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button title="Elimina" class="btn btn-danger mb-2 mb-sm-0" onclick='handleActionProgram("delete", {{program.id}}, "{{program.name}}")'>
+                                    <i class="fas fa-trash"></i> <!-- Delete icon -->
+                                </button>  
+                            </td>                          
                             <td>{{ program.name }}</td>
                             <td>{{ program.valid_from | format_date }}</td>
                             <td>{{ program.valid_to | format_date }}</td>
@@ -31,7 +40,7 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="5" class="text-center">Nessun programam fedelt&agrave; trovato</td>
+                        <td colspan="5" class="text-center">Nessun programma fedelt&agrave; trovato</td>
                     </tr>
                 {% endif %}
             </tbody>

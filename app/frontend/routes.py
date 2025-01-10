@@ -21,22 +21,22 @@ def serve_spa():
 # Admin page handler (example of backend interaction)
 @bp.route('/new_customer', methods=['GET', 'POST'])
 def new_customer():
-    if request.method == 'POST':
-        name = request.form['name']
-        last_name = request.form['last_name']
-        email = request.form['email']
-        address = request.form['address']
+    # if request.method == 'POST':
+    #     name = request.form['name']
+    #     last_name = request.form['last_name']
+    #     email = request.form['email']
+    #     address = request.form['address']
 
-        # Make a request to the backend API to create a new customer
-        response = requests.post(
-            f'{BACKEND_API_URL}/customers/add',
-            json={'name': name, 'last_name': last_name, 'email': email, 'address': address}
-        )
+    #     # Make a request to the backend API to create a new customer
+    #     response = requests.post(
+    #         f'{BACKEND_API_URL}/customers/add',
+    #         json={'name': name, 'last_name': last_name, 'email': email, 'address': address}
+    #     )
 
-        if response.status_code == 201:
-            return jsonify({'message': 'Customer created successfully!'}), 200
-        else:
-            return jsonify({'message': 'Error creating customer. Please try again.'}), 500
+    #     if response.status_code == 201:
+    #         return jsonify({'message': 'Customer created successfully!'}), 200
+    #     else:
+    #         return jsonify({'message': 'Error creating customer. Please try again.'}), 500
 
     return render_template('new_customer.html')
 
@@ -44,7 +44,6 @@ def new_customer():
 @bp.route('/customers')
 def customers():        
     return render_template('customers.html', customers=customers)
-
 
 # Programs search handler
 @bp.route('/programs')
@@ -63,3 +62,26 @@ def programs():
 @bp.route('/scan')
 def scan():
     return render_template('scan.html')
+
+
+# Admin page handler (example of backend interaction)
+@bp.route('/new_program', methods=['GET', 'POST'])
+def new_program():
+    # if request.method == 'POST':
+    #     name = request.form['name']
+    #     last_name = request.form['last_name']
+    #     email = request.form['email']
+    #     address = request.form['address']
+
+    #     # Make a request to the backend API to create a new customer
+    #     response = requests.post(
+    #         f'{BACKEND_API_URL}/customers/add',
+    #         json={'name': name, 'last_name': last_name, 'email': email, 'address': address}
+    #     )
+
+    #     if response.status_code == 201:
+    #         return jsonify({'message': 'Customer created successfully!'}), 200
+    #     else:
+    #         return jsonify({'message': 'Error creating customer. Please try again.'}), 500
+
+    return render_template('new_program.html')

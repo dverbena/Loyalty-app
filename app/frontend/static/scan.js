@@ -129,7 +129,7 @@ const handleScan = (decodedText) => {
                     type: 'POST',
                     url: 'accesses/add',
                     contentType: 'application/json',
-                    data: JSON.stringify({ qr_code: decodedText }),
+                    data: JSON.stringify({ qr_code: decodedText, imported: false, reward: responseReward.reward_due }),
                     success: function (responseAdd) {
                         if(responseReward.reward_due) sendRewardMessageToCustomersPage();
                         sendMessageToCustomersPage(`$Check in di ${responseAdd.customer.name} ${responseAdd.customer.last_name} riuscito!`);
@@ -137,7 +137,7 @@ const handleScan = (decodedText) => {
                         navigateTo('customers');
                     },
                     error: function (xhr) {
-                        const errorMessage = xhr.responseJSON?.details || xhr.responseText || "Errore generico";
+                        const errorMessage = xhr.responseJSON?.error || xhr.error || "Errore generico";
                         $('#error-message').text(errorMessage).show();
         
                         setTimeout(() => {
@@ -148,7 +148,7 @@ const handleScan = (decodedText) => {
                 });
             },
             error: function (xhr) {
-                const errorMessage = xhr.responseJSON?.details || xhr.responseText || "Errore generico";
+                const errorMessage = xhr.responseJSON?.error || xhr.responseText || "Errore generico";
                 $('#error-message').text(errorMessage).show();
 
                 setTimeout(() => {

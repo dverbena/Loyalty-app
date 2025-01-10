@@ -2,7 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from app.database import Base
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 from pydantic import BaseModel, Field
 from typing import Optional
 import uuid
@@ -13,7 +13,7 @@ customer_program = Table(
     'customer_program',
     Base.metadata,
     Column('customer_id', Integer, ForeignKey('customers.id', ondelete="CASCADE"), primary_key=True),
-    Column('program_id', Integer, ForeignKey('programs.id', ondelete="CASCADE"), primary_key=True)
+    Column('program_id', Integer, ForeignKey('programs.id', ondelete="RESTRICT"), primary_key=True)
 )
 
 class Customer(Base):
@@ -28,11 +28,18 @@ class Customer(Base):
     created_at = Column(TIMESTAMP, server_default='CURRENT_TIMESTAMP')
 
     # Relationships
-    access_logs = relationship("AccessLog", back_populates="customer")
+    access_logs = relationship(
+        "AccessLog", 
+        back_populates="customer",
+        cascade='all, delete-orphan'
+    )
+    
     programs = relationship(
         "Program",
         secondary = customer_program,
-        back_populates ="customers"
+        back_populates ="customers",
+        cascade="save-update, merge, refresh-expire",
+        single_parent=True  # Add this flag to ensure each Program is linked to a single Customer    
     )
 
     def __init__(self, name, last_name, email, address=None):
@@ -47,10 +54,17 @@ class AccessLog(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     customer_id = Column(Integer, ForeignKey("customers.id", ondelete="CASCADE"), nullable=False)
-    access_time = Column(DateTime, default=datetime.utcnow)
+    is_imported = Column(Boolean, nullable=False, default=True)
+    is_reward = Column(Boolean, nullable=False, default=True)
+    access_time = Column(DateTime, default=datetime.now(timezone.utc))
 
     # Establish relationship to Customer
-    customer = relationship("Customer", back_populates="access_logs")
+    customer = relationship(
+        "Customer", 
+        back_populates="access_logs",
+        cascade='delete-orphan',
+        single_parent=True  # Add this flag to ensure each Program is linked to a single Customer    
+    )
 
 class Program(Base):
     __tablename__ = 'programs'
@@ -63,11 +77,10 @@ class Program(Base):
     num_accesses_reward = Column(Integer, nullable=False)
     created_at = Column(TIMESTAMP, server_default='CURRENT_TIMESTAMP')
 
-    # Relationships
     customers = relationship(
         "Customer",
         secondary=customer_program,
-        back_populates="programs"
+        back_populates="programs" #,        cascade="save-update, merge, refresh-expire"
     )
 
     def __init__(self, name, valid_from, valid_to, num_access_to_trigger, num_accesses_reward):
@@ -91,6 +104,7 @@ class CustomerCreateEditRequest(BaseModel):
     email: str = Field(..., description="Email address of the customer")
     address: Optional[str] = Field(None, description="Address of the customer")
     programs: Optional[list[int]] = Field(None, description="List of program IDs")
+    access_import: Optional[int] = Field(0, description="Number of accesses to be imported from paper or previous systems")
 
 class QRCodeRequest(BaseModel):
     qr_code: str = Field(..., min_length=1, max_length=256, description="QR code of the customer")
@@ -98,8 +112,10 @@ class QRCodeRequest(BaseModel):
 class LogAccessRequest(BaseModel):
     id: Optional[int] = Field(None, description="Customer's id")
     qr_code: Optional[str] = Field(None, min_length=1, max_length=256, description="QR code of the customer")
+    imported: Optional[bool] = Field(None, description="Whether this is a 'fake' access used to keep track of data imported from paper or previous systems")
+    reward: bool = Field(..., description="Whether this is a reward access")
 
-class ProgramCreateRequest(BaseModel):
+class ProgramCreateEditRequest(BaseModel):
     name: str = Field(..., description="Name of the reward program")
     valid_from: date = Field(..., description="Reward programs start of validity")
     valid_to: date = Field(..., description="Reward programs end of validity")

@@ -6,7 +6,10 @@ var AppSession = {
     rewardBannerTimer: null,
     showRewardBanner: false,
     rewardSempahore: false,
-    customerBeingEdited: null
+    customerBeingEdited: null,   
+    messageToProgramPage: { msg: null, type: null },
+    programSemaphore: {info: false, error: false }, 
+    programBeingEdited: null
 };
 
 const AppState = {
@@ -53,18 +56,38 @@ const navigateTo = (page) => {
                 {
                     stopMessagesTimer();
                     stopRewardBannerTimer();
-    
-                    if (page === 'scan') {
-                        initializeCamera();
+                    
+                    if(page === 'programs') {
+                        startMessagesTimerProgram();
                     }
-                    else if (page === 'new_customer') {
-                        $('#customerForm').on('submit', function(event) {
-                            event.preventDefault();
-                            validateAndSubmitNewCustomer(event);
-                        });
-                        
-                        setNewCustomerBehavior();
-                        populateProgramsForCustomer();
+                    else {
+                        stopMessagesTimerProgram();
+        
+                        if (page === 'scan') {
+                            initializeCamera();
+                        }
+                        else {
+                            if (page === 'new_customer') {
+                                $('#customerForm').on('submit', function(event) {
+                                    event.preventDefault();
+                                    validateAndSubmitNewCustomer(event);
+                                });
+                                
+                                initNewCustomer();
+                                populateProgramsForCustomer();
+                            }
+                            else {
+                                
+                            if (page === 'new_program') {
+                                    $('#programForm').on('submit', function(event) {
+                                        event.preventDefault();
+                                        validateAndSubmitNewProgram(event);
+                                    });
+                                    
+                                    initNewProgram();
+                                }
+                            }
+                        }
                     }
                 }
             });

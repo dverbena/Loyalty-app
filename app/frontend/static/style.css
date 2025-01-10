@@ -1,74 +1,52 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Trebuchet MS', Helvetica, sans-serif;
 }
 
 .navbar-brand {
     font-weight: bold;
 }
 
+/*
 #main-content {
     padding: 20px;
 }
+*/
 
 /* Custom side nav style */
-#sidebar {
-    position: fixed;
-    top: 0;
-    left: -250px;  /* Start off-screen */
-    width: 250px;
-    height: 100%;
-    background-color: #343a40;
-    transition: left 0.3s ease; /* Smooth sliding effect */
-    padding-left: 40px;
-    padding-top: 10px;
-    z-index: 999;
+/* Override background color of the sidebar */
+#menu > li {
+    font-size: 1.3em;
 }
 
-#sidebar.active {
-    left: 0;  /* Slide in */
+#menu > li > a > i {
+    width: 30px;
 }
 
-#sidebar .navbar-nav li {
-    padding: 10px 20px;
+.bg-dark {
+    background-color: #9CC545 !important; /* Replace with your desired color */
 }
 
-#sidebar .navbar-nav li a {
-    color: white;
-    text-decoration: none;
+/* Change link color */
+.nav-link {
+    color: #ffffff !important; /* Replace with your desired link color */
 }
 
-#sidebar .navbar-nav li a:hover {
-    background-color: #575d63;
+/* Change link hover color */
+.nav-link:hover {
+    color: #ff9800 !important; /* Replace with your desired hover color */
 }
 
-#sidebar .navbar-nav ul {
-    list-style-type: none; /* Remove default bullet points */
-    padding-left: 20px;    /* Indent sub-items */
+/* Style for active links */
+.nav-link.active {
+    background-color: #444444 !important;
+    color: #ffffff !important; /* Adjust as needed */
 }
 
-#sidebar .navbar-nav ul li a {
-    color: white;        /* Lighter color for sub-items */
-}
-
-#sidebar .navbar-nav ul li a:hover {
-    color: white;          /* Highlight on hover */
-}
-
-.hamburger {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 999;
-    cursor: pointer;
-    font-size: 30px; /* Increase font size */
-    color: black;
-}
-
-.hamburger.active {
-    transform: rotate(90deg); /* Optional: to rotate the hamburger when active */
-    color: white;
+/* Style for disabled links */
+.nav-link.disabled {
+    color: #7d7d7d !important;
 }
 
 .required {

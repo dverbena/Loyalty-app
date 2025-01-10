@@ -161,13 +161,12 @@ def create_new_customer():
     except ValidationError as e:
         logger.error(f"Validation error while creating customer: {str(e)}")
         return jsonify({
-            "error": "Invalid data provided",
-            "details": str(e)
+            "error": f"Invalid data provided: {str(e)}"
         }), 400
 
     try:
         db = next(get_db())
-        customer = create_customer(db, data.name, data.last_name, data.email, data.address, data.programs)
+        customer = create_customer(db, data.name, data.last_name, data.email, data.address, data.access_import, data.programs)
 
         logger.info(f"Created new customer with ID: {customer.id}, Name: {customer.name} {customer.last_name}")
 
@@ -185,8 +184,7 @@ def create_new_customer():
         # Catch any other exceptions (e.g., database errors)
         logger.error(f"Error while creating customer: {str(e)}")
         return jsonify({
-            "error": "An unexpected error occurred while creating the customer.",
-            "details": str(e)
+            "error": f"An unexpected error occurred while creating the customer: {str(e)}"
         }), 500    
 
 @bp.route("/edit/<int:id>", methods=["PUT"])
@@ -199,8 +197,7 @@ def edit_customer(id):
     except ValidationError as e:
         logger.error(f"Validation error while editing customer: {str(e)}")
         return jsonify({
-            "error": "Invalid data provided",
-            "details": str(e)
+            "error": f"Invalid data provided: {str(e)}"
         }), 400
 
     try:
@@ -241,8 +238,7 @@ def edit_customer(id):
     except Exception as e:
         logger.error(f"Error while editing customer: {str(e)}")
         return jsonify({
-            "error": "An unexpected error occurred while editing the customer.",
-            "details": str(e)
+            "error": f"An unexpected error occurred while editing the customer: {str(e)}"
         }), 500
 
 def send_email_with_attachment_and_inline_image(to_email, attachment):
@@ -323,8 +319,7 @@ def send_qr_code():
         except ValidationError as e:
             logger.error(f"Validation error: {str(e)}")
             return jsonify({
-                "error": "Invalid data provided",
-                "details": str(e)
+                "error": f"Invalid data provided: {str(e)}"
             }), 400
 
         db = next(get_db())
@@ -357,8 +352,7 @@ def send_qr_code():
 
     except Exception as e:
             return jsonify({
-                "error": "error",
-                "details": str(e)
+                "error": f"error: {str(e)}"
             }), 400
     
 @bp.route("/<int:id>", methods=["DELETE"])
@@ -399,4 +393,4 @@ def delete_customer(id):
     except Exception as e:
         logger.error(f"Error occurred while deleting customer with ID {id}: {str(e)}")
         db.rollback()
-        return jsonify({"error": "An error occurred while deleting the customer.", "details": str(e)}), 500
+        return jsonify({ "error": f"An error occurred while deleting the customer: {str(e)}" }), 500

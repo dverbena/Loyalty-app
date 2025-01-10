@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS customers (
 CREATE TABLE IF NOT EXISTS access_logs (
     id SERIAL PRIMARY KEY,
     customer_id INT REFERENCES customers(id) ON DELETE CASCADE,
+    is_imported BOOLEAN NOT NULL DEFAULT FALSE,
+    is_reward BOOLEAN NOT NULL DEFAULT FALSE,
     access_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -30,7 +32,7 @@ CREATE TABLE IF NOT EXISTS programs (
 -- Create customer_program table for many-to-many relationship
 CREATE TABLE IF NOT EXISTS customer_program (
     customer_id INT NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
-    program_id INT NOT NULL REFERENCES programs(id) ON DELETE CASCADE,
+    program_id INT NOT NULL REFERENCES programs(id) ON DELETE RESTRICT,
     PRIMARY KEY (customer_id, program_id)
 );
 
