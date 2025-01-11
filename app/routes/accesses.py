@@ -34,7 +34,7 @@ def log_access_endpoint():
         logger.info(f"Received QR code: {qr_code}")
 
         db = next(get_db())
-        customer = log_access(db, qr_code)
+        customer = log_access(db, qr_code, data.imported, data.reward)
         if not customer:
             logger.error(f"Invalid QR code: {qr_code}. Customer not found.")
             return jsonify({"error": "Invalid QR code"}), 404
