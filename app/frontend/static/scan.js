@@ -132,7 +132,7 @@ const handleScan = (decodedText) => {
                     data: JSON.stringify({ qr_code: decodedText, imported: false, reward: responseReward.reward_due }),
                     success: function (responseAdd) {
                         if(responseReward.reward_due) sendRewardMessageToCustomersPage();
-                        sendMessageToCustomersPage(`$Check in di ${responseAdd.customer.name} ${responseAdd.customer.last_name} riuscito!`);
+                        sendMessageToCustomersPage(`Check in di ${responseAdd.customer.name} ${responseAdd.customer.last_name} riuscito!`);
 
                         navigateTo('customers');
                     },
