@@ -17,15 +17,11 @@ body {
 /* Custom side nav style */
 /* Override background color of the sidebar */
 #menu > li {
-    font-size: 1.3em;
+    font-size: 1.2em;
 }
 
 #menu > li > a > i {
     width: 30px;
-}
-
-.bg-dark {
-    background-color: #9CC545 !important; /* Replace with your desired color */
 }
 
 /* Change link color */

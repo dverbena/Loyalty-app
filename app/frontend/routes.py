@@ -14,9 +14,11 @@ BACKEND_API_URL = f'http://localhost:{int(port)}'
 
 # Serve the SPA at the root URL
 @bp.route('/')
-def serve_spa():
+def serve_spa():    
     # Serve the main entry point for the SPA
-    return render_template('index.html')
+    app_title = os.getenv("APP_TITLE", "APP title")
+    theme_color = os.getenv("THEME_COLOR", "#ffffff")  # Default to white if not set
+    return render_template("index.html", theme_color=theme_color, app_title=app_title)
 
 # Admin page handler (example of backend interaction)
 @bp.route('/new_customer', methods=['GET', 'POST'])

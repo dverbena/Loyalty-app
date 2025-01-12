@@ -9,8 +9,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('frontend.static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('frontend.static', filename='style.css') }}">    
     <style>
+        .bg-dark {
+            background-color: {{ theme_color }} !important; 
+        }
     </style>
 </head>
 
@@ -81,9 +84,9 @@
                 </div>
             </div>
             <div class="col-auto col-10 col-sm-10 col-md-9 col-xl-10 px-0">
-                <div class="" style="padding-top: 5px; padding-bottom: 5px; background-color: #9CC545; width: 100%;">
-                    <img src="{{ url_for('frontend.static', filename='mttf.png') }}" style="display: inline; width: 60px;">
-                    <h1 class="ms-1" style="display: inline; color: white; vertical-align: middle;">MTTF</h1>
+                <div class="bg-dark" style="padding-top: 5px; padding-bottom: 5px; width: 100%;">
+                    <img src="{{ url_for('frontend.static', filename='logo/logo.png') }}" style="display: inline; width: 60px;">
+                    <h1 class="ms-1" style="display: inline; color: white; vertical-align: middle;">{{app_title}}</h1>
                 </div>
                 <div id="main-content" class="container">
                 </div>

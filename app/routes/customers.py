@@ -285,7 +285,7 @@ def send_email_with_attachment_and_inline_image(to_email, attachment):
     msg_alternative.attach(MIMEText(html_body, "html"))
 
     # Attach the inline image
-    with open("/app/frontend/static/mttf.jpg", "rb") as img:
+    with open("/app/frontend/static/logo/logo.png", "rb") as img:
         img_part = MIMEImage(img.read())
         img_part.add_header("Content-ID", f"<{cid}>")
         img_part.add_header("Content-Disposition", "inline", filename="mttf-logo.png")
