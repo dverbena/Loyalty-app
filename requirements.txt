@@ -6,3 +6,5 @@ pydantic
 qrcode[pil]
 requests
 pillow
+werkzeug
+PyJWT

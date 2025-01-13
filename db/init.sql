@@ -1,3 +1,11 @@
+-- Create user table
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(80) NOT NULL,
+    password VARCHAR(200) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create customers table
 CREATE TABLE IF NOT EXISTS customers (
     id SERIAL PRIMARY KEY,
@@ -73,7 +81,7 @@ BEFORE INSERT OR UPDATE ON customer_program
 FOR EACH ROW
 EXECUTE FUNCTION check_program_overlap();
 
-INSERT INTO programs (name, valid_from, valid_to, num_access_to_trigger, num_accesses_reward) VALUES 
-('Silver 2025', '2025-01-01', '2025-12-31', 10, 1), 
-('Gold 2025', '2025-01-01', '2025-12-31', 10, 2);
+--INSERT INTO programs (name, valid_from, valid_to, num_access_to_trigger, num_accesses_reward) VALUES 
+--('Silver 2025', '2025-01-01', '2025-12-31', 10, 1), 
+--('Gold 2025', '2025-01-01', '2025-12-31', 10, 2);
 

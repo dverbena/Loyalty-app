@@ -62,7 +62,7 @@ class AccessLog(Base):
     customer = relationship(
         "Customer", 
         back_populates="access_logs",
-        cascade='delete-orphan',
+        cascade='delete, delete-orphan',
         single_parent=True  # Add this flag to ensure each Program is linked to a single Customer    
     )
 
@@ -89,6 +89,18 @@ class Program(Base):
         self.valid_to = valid_to
         self.num_access_to_trigger = num_access_to_trigger
         self.num_accesses_reward = num_accesses_reward
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(80), unique=True, nullable=False)
+    password = Column(String(200), nullable=False)
+    created_at = Column(DateTime, server_default='CURRENT_TIMESTAMP')
+    
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
 
 # Define Pydantic models for request data validation
 class IDQuery(BaseModel):
@@ -121,3 +133,7 @@ class ProgramCreateEditRequest(BaseModel):
     valid_to: date = Field(..., description="Reward programs end of validity")
     num_access_to_trigger: int = Field(..., description="Number of accesses needed to get a reward")
     num_accesses_reward: int = Field(..., description="Number of reward accesses")
+
+class UserRequest(BaseModel):
+    username: str = Field(..., description="Username", min_length=3)
+    password: str = Field(..., description="User password", min_length=8)

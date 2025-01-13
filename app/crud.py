@@ -4,7 +4,6 @@ from sqlalchemy import and_, extract
 from datetime import datetime, timezone
 from app.models import *
 from app.utils import generate_qr_code
-from datetime import datetime
 import qrcode  # For generating QR codes
 import os
 import logging
