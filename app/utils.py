@@ -38,7 +38,7 @@ def token_required(f):
         token = request.headers.get("Authorization")
 
         if not token:
-            return jsonify({"message": "Token is missing"}), 401
+            return jsonify({"error": "Autenticazione mancante"}), 401
 
         try:
             db = next(get_db())

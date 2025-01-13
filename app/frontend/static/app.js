@@ -20,29 +20,27 @@ const AppState = {
 
 // Function to initialize the application and handle default navigation
 const initializeApp = () => {
-    const currentHash = window.location.hash || "#customers"; // Default to #customers if no hash
-    const page = currentHash.slice(1); // Remove '#' from hash
-    navigateTo(page);
+    navigateTo('customers');
 };
 
 // Navigation Logic
 const navigateTo = (page) => {
+    const token = localStorage.getItem('token');
+    if (!token) page = 'login'; //force login
+    
     const contentDiv = document.getElementById('main-content');
 
     // Fetch and replace content
-    fetch(`/${page}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Page not found");
-            }
-            return response.text();
-        })
-        .then((html) => {
+    $.ajax({
+        url: `/${page}`,
+        headers: { 'Authorization': localStorage.getItem('token') },
+        method: 'GET', 
+        success: function(html) {
             contentDiv.innerHTML = html;
-
-            stopScanning().finally(() => {                    
+    
+            stopScanning().finally(() => {
                 // Trigger page-specific logic
-                if(page === 'customers') {
+                if (page === 'customers') {
                     $('#filterForm').on('submit', function(event) {
                         event.preventDefault();
                         filterCustomers(event);
@@ -51,55 +49,64 @@ const navigateTo = (page) => {
                     filterCustomers();
                     startMessagesTimer();
                     startRewardBannerTimer();
-                }
-                else 
-                {
+                } else {
                     stopMessagesTimer();
                     stopRewardBannerTimer();
-                    
-                    if(page === 'programs') {
+    
+                    if (page === 'programs') {
+                        filterPrograms();
                         startMessagesTimerProgram();
-                    }
-                    else {
+                    } else {
                         stopMessagesTimerProgram();
-        
+    
                         if (page === 'scan') {
                             initializeCamera();
-                        }
-                        else {
+                        } else {
                             if (page === 'new_customer') {
                                 $('#customerForm').on('submit', function(event) {
                                     event.preventDefault();
                                     validateAndSubmitNewCustomer(event);
                                 });
-                                
+    
                                 initNewCustomer();
                                 populateProgramsForCustomer();
-                            }
-                            else {
-                                
-                            if (page === 'new_program') {
+                            } else {
+                                if (page === 'new_program') {
                                     $('#programForm').on('submit', function(event) {
                                         event.preventDefault();
                                         validateAndSubmitNewProgram(event);
                                     });
-                                    
+    
                                     initNewProgram();
+                                } else {
+                                    if (page === 'login') {
+                                        $('#loginForm').on('submit', function(event) {
+                                            event.preventDefault();
+                                            validateAndSubmitLogin(event);
+                                        });
+                                    }
                                 }
                             }
                         }
                     }
                 }
             });
-        })
-        .catch((err) => {
-            console.error("Navigation error:", err);
-            contentDiv.innerHTML = `<h1>404 - Page not found</h1>`;
-        });
+        },
+        error: function(xhr, status, error) {
+            console.error("Navigation error:", error);
+            contentDiv.innerHTML = `<h1 class="alert alert-danger mt-3">Errore: ${(xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : error)} </h1>`;
+        }
+    });
+    
 
     // Update the URL hash
     window.location.hash = `#${page}`;
 };
+
+const logout = () => {
+    localStorage.removeItem('token');
+    navigateTo('login');
+}
 
 // Service Worker Registration
 if ('serviceWorker' in navigator) {

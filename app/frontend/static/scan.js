@@ -127,6 +127,8 @@ const handleScan = (decodedText) => {
             success: function (responseReward) {//sendRewardMessageToCustomersPage
                 $.ajax({
                     type: 'POST',
+                    headers: { 'Authorization': localStorage.getItem('token') },
+                    headers: { 'Authorization': localStorage.getItem('token') },
                     url: 'accesses/add',
                     contentType: 'application/json',
                     data: JSON.stringify({ qr_code: decodedText, imported: false, reward: responseReward.reward_due }),

@@ -27,7 +27,7 @@
                         id="menu">                        
                         <li>
                             <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <i class="fas fa-gifts"></i> <span class="d-none d-sm-inline">Programmi fedelt&agrave;<i class="ms-2 fas fa-caret-down"></i></span>
+                                <i class="fas fa-gifts"></i> <span class="d-none d-sm-inline">Programmi fedelt&agrave;<i class="ms-2 fas fa-caret-right"></i></span>
                             </a>
                             <ul class="collapse nav flex-column ms-4" id="submenu1" data-bs-parent="#menu">
                                 <li class="w-100">
@@ -44,7 +44,7 @@
                         </li>
                         <li>
                             <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <i class="fas fa-users"></i> <span class="d-none d-sm-inline">Soci<i class="ms-2 fas fa-caret-down"></i></span>
+                                <i class="fas fa-users"></i> <span class="d-none d-sm-inline">Soci<i class="ms-2 fas fa-caret-right"></i></span>
                             </a>
                             <ul class="collapse nav flex-column ms-4" id="submenu2" data-bs-parent="#menu">
                                 <li class="w-100">
@@ -81,6 +81,11 @@
                             <li><a class="dropdown-item" href="#">Sign out</a></li>
                         </ul>
                     </div> -->
+                    <div>
+                        <a href="#" onclick="logout();" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                            <i class="fas fa-arrow-right-from-bracket"></i><span class="ms-1 d-none d-sm-inline">Logout</span>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="col-auto col-10 col-sm-10 col-md-9 col-xl-10 px-0">
@@ -93,24 +98,6 @@
             </div>
         </div>
     </div>
-    <!-- <div id="sidebar" class="bg-dark">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="#" onclick="toggleSidebar(); navigateTo('programs')">Programmi fedelt&agrave;</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" onclick="toggleSidebar(); navigateTo('customers')">Soci</a>
-                <ul class="navbar-nav" style="padding-left: 20px;">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="toggleSidebar(); AppSession.customerBeingEdited = null; navigateTo('new_customer')">Nuovo socio</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#" onclick="toggleSidebar(); navigateTo('scan')">Scansiona QR</a>
-            </li>
-        </ul>
-    </div> -->
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -120,6 +107,7 @@
     <script src="{{ url_for('frontend.static', filename='customers.js') }}"></script>
     <script src="{{ url_for('frontend.static', filename='programs.js') }}"></script>
     <script src="{{ url_for('frontend.static', filename='scan.js') }}"></script>
+    <script src="{{ url_for('frontend.static', filename='login.js') }}"></script>
     <script src="https://unpkg.com/html5-qrcode"></script> <!-- QR code scanner library -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>

@@ -16,7 +16,7 @@ body {
 
 /* Custom side nav style */
 /* Override background color of the sidebar */
-#menu > li {
+#sidebar {
     font-size: 1.2em;
 }
 

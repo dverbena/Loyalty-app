@@ -10,6 +10,7 @@ function initNewCustomer() {
             $.ajax({
                 type: 'GET',
                 url: `/customers/${AppSession.customerBeingEdited}`,
+                headers: { 'Authorization': localStorage.getItem('token') },
                 success: function (response) {              
                     $('#name').val(response.name);
                     $('#last_name').val(response.last_name);
@@ -52,11 +53,16 @@ function populateProgramsForCustomer() {
             allowClear: true
         });
 
-        fetch("/programs/current") // Fetch programs from the API
-            .then((response) => response.json())
-            .then((programs) => {
+        // Fetch programs from the API
+        $.ajax({
+            url: "/programs/current",
+            method: "GET",
+            dataType: "json",
+            headers: { 'Authorization': localStorage.getItem('token') },
+            success: function(programs) {
                 const programSelect = document.getElementById("programs");
 
+                // Populate the dropdown with the fetched programs
                 programs.forEach((program) => {
                     const option = document.createElement("option");
                     option.value = program.id;
@@ -64,28 +70,37 @@ function populateProgramsForCustomer() {
                     programSelect.appendChild(option);
                 });
 
-                if(AppSession.customerBeingEdited) {
+                if (AppSession.customerBeingEdited) {
+                    // Fetch programs linked to the customer being edited
                     $.ajax({
-                        type: 'GET',
                         url: `/programs/customer/${AppSession.customerBeingEdited}`,
-                        success: function (response) {  
-                            $('#programs').val(response.map(program => program.id)).trigger('change'); // Notify Select2 of changes;                    
+                        method: "GET",
+                        headers: { 
+                            "Authorization": localStorage.getItem("token") 
                         },
-                        error: function (xhr, status, error) {
-                            // If there is an error, display the error message on the page
-                            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
+                        success: function(response) {
+                            // Set the selected programs in the dropdown
+                            $('#programs').val(response.map(program => program.id)).trigger('change'); // Notify Select2 of changes
+                        },
+                        error: function(xhr, status, error) {
+                            // Handle errors
+                            const errorMessage = "Error: " + 
+                                (xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "An error occurred");
+                            
                             $('#error-message').text(errorMessage).show();
 
-                            setTimeout(function () {
+                            // Hide the error message after 10 seconds
+                            setTimeout(function() {
                                 $('#error-message').fadeOut();
                             }, 10000);
                         }
                     });
                 }
-            })
-            .catch((error) => {
+            },
+            error: function(xhr, status, error) {
                 console.error("Error fetching programs:", error);
-            });
+            }
+        });
     });    
 }
 
@@ -126,11 +141,13 @@ function submit_new_or_modify_customer() {
         url: AppSession.customerBeingEdited ? `customers/edit/${AppSession.customerBeingEdited}` : '/customers/add',
         contentType: 'application/json',  // Set content type to JSON
         data: JSON.stringify(formData),   // Send the form data as JSON
+        headers: { 'Authorization': localStorage.getItem('token') },
         success: function (response) {   
             if((!AppSession.customerBeingEdited) || (response.email_changed)) {
                 $.ajax({
                     type: 'POST',
                     url: 'customers/send-qr-code',
+                    headers: { 'Authorization': localStorage.getItem('token') },
                     contentType: 'application/json',  // Set content type to JSON
                     data: `{"id": ${response.id}}`  // Send the form data as JSON
                 });

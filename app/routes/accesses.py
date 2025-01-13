@@ -4,6 +4,7 @@ import logging
 from app.database import *
 from app.crud import *
 from app.models import *
+from app.utils import token_required
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -11,7 +12,8 @@ logger = logging.getLogger(__name__)
 bp = Blueprint('accesses', __name__, url_prefix='/accesses')
 
 @bp.route('/add', methods=['POST'])
-def log_access_endpoint():
+@token_required
+def log_access_endpoint(current_user):
     try:
         # Log the start of the request processing
         logger.info("Received request to log access.")
@@ -61,7 +63,8 @@ def log_access_endpoint():
     }), 200
     
 @bp.route('/customer/<id>', methods=['GET'])
-def get_access_logs_endpoint(id):
+@token_required
+def get_access_logs_endpoint(current_user, id):
     logger.info(f"Fetching accesses for customer_id: {id}")
 
     db = next(get_db())
@@ -83,7 +86,8 @@ def get_access_logs_endpoint(id):
     } for log in logs]), 200
 
 @bp.route("/customer/qr/<qr_code>", methods=["GET"])
-def get_access_logs_by_qr(qr_code):
+@token_required
+def get_access_logs_by_qr(current_user, qr_code):
     logger.info(f"Fetching accesses for QR code: {qr_code}")
 
     db = next(get_db())
@@ -105,7 +109,8 @@ def get_access_logs_by_qr(qr_code):
     } for log in logs]), 200
 
 @bp.route("/reward_due/<cid>", methods=["GET"])
-def is_customer_reward_due(cid):
+@token_required
+def is_customer_reward_due(current_user, cid):
     logger.info(f"Checking if customer {cid} is due for a reward")
 
     db = next(get_db())
@@ -119,7 +124,8 @@ def is_customer_reward_due(cid):
     }), 200
 
 @bp.route("/reward_due_qr/<qr>", methods=["GET"])
-def is_customer_reward_due_qr(qr):
+@token_required
+def is_customer_reward_due_qr(current_user, qr):
     logger.info(f"Checking if customer {qr} is due for a reward")
 
     db = next(get_db())    

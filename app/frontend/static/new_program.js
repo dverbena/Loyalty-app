@@ -14,6 +14,7 @@ function initNewProgram() {
             $.ajax({
                 type: 'GET',
                 url: `/programs/${AppSession.programBeingEdited}`,
+                headers: { 'Authorization': localStorage.getItem('token') },
                 success: function (response) {                        
                     $('#name').val(response.name);
 
@@ -92,6 +93,7 @@ function submit_new_or_modify_program() {
     console.log(formData);
     $.ajax({
         type: AppSession.programBeingEdited ? 'PUT' : 'POST',
+        headers: { 'Authorization': localStorage.getItem('token') },
         url: AppSession.programBeingEdited ? `programs/edit/${AppSession.programBeingEdited}` : '/programs/add',
         contentType: 'application/json',  // Set content type to JSON
         data: JSON.stringify(formData),   // Send the form data as JSON

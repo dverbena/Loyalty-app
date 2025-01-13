@@ -44,27 +44,21 @@ def log_access_endpoint(current_user):
 
     # Return customer details if access is logged
     return jsonify({
-        "message": f"User {data.username} created"
+        "message": f"Utente {data.username} creato"
     }), 200
 
 @bp.route('/login', methods=['POST'])
 def login():
-    try:
-        # Log the start of the request processing
-        logger.info("Received request to create a new user")
+    data = request.get_json()
 
-        # Validate the input data using Pydantic
-        data = UserRequest(**request.get_json())
-        logger.debug(f"Validated input data: {data.dict()}")
-
-    except ValidationError as e:
-        logger.error(f"Validation error: {str(e)}")  # Log the validation error
-        return jsonify({"error": str(e)}), 400
+    username = data.get('username')
+    password = data.get('password')
 
     db = next(get_db())
-    user = db.query(User).filter(User.username == data.username).first()
-    if not user or not check_password_hash(user.password, data.password):
-        return jsonify({"error": "Invalid credentials"}), 401
+    user = db.query(User).filter(User.username == username).first()
+
+    if not user or not check_password_hash(user.password, password):
+        return jsonify({"error": "Credenziali non valide"}), 401
 
     token = jwt.encode(
         {
@@ -77,5 +71,6 @@ def login():
     return jsonify({"token": token})
 
 @bp.route('/logout', methods=['POST'])
-def logout():
-    return jsonify({"message": "Logged out"})
+@token_required
+def logout(current_user):    
+    return jsonify({"message": f"Utente sloggato"})

@@ -78,11 +78,13 @@ function handleAction(action, id, name, last_name) {
             $.ajax({
                 type: 'GET',
                 url: `accesses/reward_due/${id}`,
+                headers: { 'Authorization': localStorage.getItem('token') },
                 success: function (responseReward) {//sendRewardMessageToCustomersPage
                     $.ajax({
                         type: 'POST',
                         url: 'accesses/add',
                         contentType: 'application/json',
+                        headers: { 'Authorization': localStorage.getItem('token') },
                         data: `{"id": ${id}, "imported": false, "reward": ${responseReward.reward_due}}`,   // Send the form data as JSON
                         success: function (response) {
                             if(responseReward.reward_due) sendRewardMessageToCustomersPage();
@@ -105,6 +107,7 @@ function handleAction(action, id, name, last_name) {
                 url: 'customers/send-qr-code',
                 contentType: 'application/json',  // Set content type to JSON
                 data: `{"id": ${id}}`,   // Send the form data as JSON
+                headers: { 'Authorization': localStorage.getItem('token') },
                 success: function (response) {
                     sendMessageToCustomersPage(`QR mandato a ${response.customer.name} ${response.customer.last_name}`);
                 },
@@ -124,6 +127,7 @@ function handleAction(action, id, name, last_name) {
                 $.ajax({
                     type: 'DELETE',
                     url: `customers/${id}`,  // Adjust the endpoint as needed
+                    headers: { 'Authorization': localStorage.getItem('token') },
                     success: function (response) {
                         sendMessageToCustomersPage(`Socio ${response.customer.name} ${response.customer.last_name} eliminato correttamente!`);
                         
@@ -141,6 +145,7 @@ function handleAction(action, id, name, last_name) {
             $.ajax({
                 url: `/accesses/customer/${id}`,  // The endpoint to fetch access logs
                 type: 'GET',
+                headers: { 'Authorization': localStorage.getItem('token') },
                 success: function(data) {
                     // Empty the table before adding new rows
                     $('#accessLogsTable tbody').empty();
@@ -179,6 +184,7 @@ function filterCustomers(event) {
     $.ajax({
         type: 'GET',
         url: `customers/search?name=${formData.name}&last_name=${formData.last_name}`,
+        headers: { 'Authorization': localStorage.getItem('token') },
         success: function (response) {  
             $('#customers_table tbody').empty(); // remove all rows
             

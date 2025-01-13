@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, jsonify
 import requests
 import os
 import logging
+from app.utils import token_required
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -22,7 +23,8 @@ def serve_spa():
 
 # Admin page handler (example of backend interaction)
 @bp.route('/new_customer', methods=['GET', 'POST'])
-def new_customer():
+@token_required
+def new_customer(current_user):
     # if request.method == 'POST':
     #     name = request.form['name']
     #     last_name = request.form['last_name']
@@ -44,46 +46,26 @@ def new_customer():
 
 # Customers search handler
 @bp.route('/customers')
-def customers():        
+@token_required
+def customers(current_user):        
     return render_template('customers.html', customers=customers)
 
 # Programs search handler
 @bp.route('/programs')
-def programs():
-    response = requests.get(f'{BACKEND_API_URL}/programs/all')
-
-    if response.status_code == 200:
-        programs = response.json()
-    else:
-        programs = []
-        
-    logger.debug("Programs data:", customers)
-
+@token_required
+def programs(current_user):
     return render_template('programs.html', programs=programs)
 
 @bp.route('/scan')
-def scan():
+@token_required
+def scan(current_user):
     return render_template('scan.html')
 
-
-# Admin page handler (example of backend interaction)
-@bp.route('/new_program', methods=['GET', 'POST'])
-def new_program():
-    # if request.method == 'POST':
-    #     name = request.form['name']
-    #     last_name = request.form['last_name']
-    #     email = request.form['email']
-    #     address = request.form['address']
-
-    #     # Make a request to the backend API to create a new customer
-    #     response = requests.post(
-    #         f'{BACKEND_API_URL}/customers/add',
-    #         json={'name': name, 'last_name': last_name, 'email': email, 'address': address}
-    #     )
-
-    #     if response.status_code == 201:
-    #         return jsonify({'message': 'Customer created successfully!'}), 200
-    #     else:
-    #         return jsonify({'message': 'Error creating customer. Please try again.'}), 500
-
+@bp.route('/new_program')
+@token_required
+def new_program(current_user):
     return render_template('new_program.html')
+
+@bp.route('/login')
+def login():
+    return render_template('login.html')

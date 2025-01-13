@@ -14,6 +14,7 @@ from app.database import *
 from app.crud import *
 from app.models import *
 from app.utils import generate_qr_code
+from app.utils import token_required
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -29,7 +30,8 @@ EMAIL_FROM = os.getenv('EMAIL_FROM')
 bp = Blueprint('customers', __name__, url_prefix='/customers')
 
 @bp.route("/all", methods=["GET"])
-def list_customers():
+@token_required
+def list_customers(current_user):
     logger.info("Received request to list all customers.")
 
     db = next(get_db())
@@ -48,7 +50,8 @@ def list_customers():
     } for customer in customers])
     
 @bp.route('/<int:id>', methods=['GET'])
-def get_customer_by_id(id):    
+@token_required
+def get_customer_by_id(current_user, id):    
     logger.info(f"Fetching info for customer_id: {id}")
 
     db = next(get_db())
@@ -71,7 +74,8 @@ def get_customer_by_id(id):
     }), 200
 
 @bp.route("/qr/<qr_code>", methods=["GET"])
-def get_customer_by_qr(qr_code):
+@token_required
+def get_customer_by_qr(current_user, qr_code):
     logger.info(f"Received request to get customer by QR code: {qr_code}")
 
     # Validate qr_code parameter using Pydantic model
@@ -102,7 +106,8 @@ def get_customer_by_qr(qr_code):
     }), 200
 
 @bp.route("/search", methods=["GET"])
-def get_customers_by_name():
+@token_required
+def get_customers_by_name(current_user):
     logger.info("Received request to search customers by name and/or last name.")
 
     # Validate query parameters with Pydantic
@@ -152,7 +157,8 @@ def get_customers_by_name():
     } for customer in customers]), 200
 
 @bp.route("/add", methods=["POST"])
-def create_new_customer():
+@token_required
+def create_new_customer(current_user):
     logger.info("Received request to create a new customer.")
 
     try:
@@ -188,7 +194,8 @@ def create_new_customer():
         }), 500    
 
 @bp.route("/edit/<int:id>", methods=["PUT"])
-def edit_customer(id):
+@token_required
+def edit_customer(current_user, id):
     logger.info(f"Received request to edit customer with ID: {id}.")
 
     try:
@@ -309,7 +316,8 @@ def send_email_with_attachment_and_inline_image(to_email, attachment):
 
 
 @bp.route('/send-qr-code', methods=['POST'])
-def send_qr_code():
+@token_required
+def send_qr_code(current_user):
     try:          
         logger.info("Received request to send the QR code to customer")
         
@@ -356,7 +364,8 @@ def send_qr_code():
             }), 400
     
 @bp.route("/<int:id>", methods=["DELETE"])
-def delete_customer(id):
+@token_required
+def delete_customer(current_user, id):
     """
     Delete a customer by ID.
     

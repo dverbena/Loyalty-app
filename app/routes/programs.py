@@ -4,6 +4,7 @@ import logging
 from app.database import *
 from app.crud import *
 from app.models import *
+from app.utils import token_required
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -11,7 +12,8 @@ logger = logging.getLogger(__name__)
 bp = Blueprint('programs', __name__, url_prefix='/programs')
 
 @bp.route("/all", methods=["GET"])
-def list_programs():
+@token_required
+def list_programs(current_user):
     logger.info("Received request to list all programs.")
 
     db = next(get_db())
@@ -30,7 +32,8 @@ def list_programs():
     } for program in programs])
 
 @bp.route("/current", methods=["GET"])
-def list_current_programs():
+@token_required
+def list_current_programs(current_user):
     logger.info("Received request to list all current programs.")
 
     db = next(get_db())
@@ -49,7 +52,8 @@ def list_current_programs():
     } for program in programs])
     
 @bp.route('/<int:id>', methods=['GET'])
-def get_program_by_id(id):    
+@token_required
+def get_program_by_id(current_user, id):    
     logger.info(f"Fetching info for program_id: {id}")
 
     db = next(get_db())
@@ -72,7 +76,8 @@ def get_program_by_id(id):
     }), 200
 
 @bp.route('/customer/<int:id>', methods=['GET'])
-def get_customer_by_id(id):    
+@token_required
+def get_customer_by_id(current_user, id):    
     logger.info(f"Fetching programs for customer id: {id}")
 
     db = next(get_db())
@@ -93,7 +98,8 @@ def get_customer_by_id(id):
     } for program in programs]), 200
 
 @bp.route("/add", methods=["POST"])
-def create_new_program():
+@token_required
+def create_new_program(current_user):
     logger.info("Received request to create a new reward program.")
 
     try:
@@ -119,7 +125,8 @@ def create_new_program():
     }), 201
     
 @bp.route("/<int:id>", methods=["DELETE"])
-def delete_program(id):
+@token_required
+def delete_program(current_user, id):
     """
     Delete a program by ID.
     
@@ -162,7 +169,8 @@ def delete_program(id):
         return jsonify({ "error": f"An error occurred while deleting the program: {str(e)}" }), 500
     
 @bp.route("/edit/<int:id>", methods=["PUT"])
-def edit_program(id):
+@token_required
+def edit_program(current_user, id):
     logger.info(f"Received request to edit program with ID: {id}.")
 
     try:
