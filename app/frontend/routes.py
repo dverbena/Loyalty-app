@@ -13,12 +13,13 @@ bp = Blueprint('frontend', __name__, template_folder='templates', static_folder=
 port = os.getenv("FLASK_PORT", 5000)
 BACKEND_API_URL = f'http://localhost:{int(port)}'
 
+app_title = os.getenv("APP_TITLE", "APP title")
+theme_color = os.getenv("THEME_COLOR", "#ffffff")  # Default to white if not set
+
 # Serve the SPA at the root URL
 @bp.route('/')
 def serve_spa():    
     # Serve the main entry point for the SPA
-    app_title = os.getenv("APP_TITLE", "APP title")
-    theme_color = os.getenv("THEME_COLOR", "#ffffff")  # Default to white if not set
     return render_template("index.html", theme_color=theme_color, app_title=app_title)
 
 # Admin page handler (example of backend interaction)
@@ -42,19 +43,19 @@ def new_customer(current_user):
     #     else:
     #         return jsonify({'message': 'Error creating customer. Please try again.'}), 500
 
-    return render_template('new_customer.html')
+    return render_template('new_customer.html', theme_color=theme_color)
 
 # Customers search handler
 @bp.route('/customers')
 @token_required
 def customers(current_user):        
-    return render_template('customers.html', customers=customers)
+    return render_template('customers.html', theme_color=theme_color)
 
 # Programs search handler
 @bp.route('/programs')
 @token_required
 def programs(current_user):
-    return render_template('programs.html', programs=programs)
+    return render_template('programs.html', theme_color=theme_color)
 
 @bp.route('/scan')
 @token_required
@@ -64,7 +65,7 @@ def scan(current_user):
 @bp.route('/new_program')
 @token_required
 def new_program(current_user):
-    return render_template('new_program.html')
+    return render_template('new_program.html', theme_color=theme_color)
 
 @bp.route('/login')
 def login():

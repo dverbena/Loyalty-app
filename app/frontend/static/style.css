@@ -5,6 +5,7 @@ body {
 }
 
 .navbar-brand {
+    font-size: 15px;
     font-weight: bold;
 }
 
@@ -17,11 +18,15 @@ body {
 /* Custom side nav style */
 /* Override background color of the sidebar */
 #sidebar {
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
-#menu > li > a > i {
-    width: 30px;
+#sidebar i {
+    width: 25px;
+}
+
+#sidebar li {
+    line-height: 40px;
 }
 
 /* Change link color */

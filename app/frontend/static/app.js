@@ -110,7 +110,7 @@ const logout = () => {
 
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker.register('/frontend/static/service-worker.js')
         .then((registration) => console.log("Service Worker registered:", registration))
         .catch((err) => console.error("Service Worker registration failed:", err));
 }

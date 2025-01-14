@@ -49,7 +49,7 @@ function initNewCustomer() {
 function populateProgramsForCustomer() {    
     $(document).ready(function() {
         $('#programs').select2({
-            placeholder: "Select programs",
+            placeholder: "Seleziona programmi",
             allowClear: true
         });
 

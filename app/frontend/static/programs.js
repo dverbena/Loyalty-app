@@ -92,8 +92,8 @@ function filterPrograms(event) {
                                 </button>  
                             </td>                          
                             <td>${program.name}</td>
-                            <td>` + moment(program.valid_from).format('DD/MM/YYYY HH:mm') + `</td>
-                            <td>` + moment(program.valid_to).format('DD/MM/YYYY HH:mm') + `</td>
+                            <td>` + moment(program.valid_from).format('DD/MM/YYYY') + `</td>
+                            <td>` + moment(program.valid_to).format('DD/MM/YYYY') + `</td>
                             <td>${program.num_access_to_trigger}</td>
                             <td>${program.num_accesses_reward}</td>
                         </tr>`);
