@@ -9,7 +9,8 @@ var AppSession = {
     customerBeingEdited: null,   
     messageToProgramPage: { msg: null, type: null },
     programSemaphore: {info: false, error: false }, 
-    programBeingEdited: null
+    programBeingEdited: null,
+    menuCollapsed: true
 };
 
 const AppState = {
@@ -106,6 +107,21 @@ const navigateTo = (page) => {
 const logout = () => {
     localStorage.removeItem('token');
     navigateTo('login');
+}
+
+const toggleMenu = () => {
+    if(AppSession.menuCollapsed) {
+        $("#sidebar").show();
+        $("#rightPane").removeClass("col-12");
+        $("#rightPane").addClass("col-9");
+    }
+    else {
+        $("#sidebar").hide();
+        $("#rightPane").removeClass("col-9");
+        $("#rightPane").addClass("col-12");
+    }
+
+    AppSession.menuCollapsed = !AppSession.menuCollapsed;
 }
 
 // Service Worker Registration
