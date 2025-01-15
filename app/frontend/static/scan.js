@@ -156,7 +156,7 @@ const handleScan = (decodedText) => {
                 setTimeout(() => {
                     $('#error-message').fadeOut();
                     startScan(); // Restart scanning
-                }, 1000);
+                }, AppSession.errorMessageDuration);
             },
         });        
     }).catch((err) => alert(`Failed to stop scanner: ${err}`));

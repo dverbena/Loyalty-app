@@ -44,7 +44,7 @@ function initNewProgram() {
 
                     setTimeout(function () {
                         $('#error-message').fadeOut();
-                    }, 10000);
+                    }, AppSession.errorMessageDuration);
                 }
             });     
         }
@@ -113,7 +113,7 @@ function submit_new_or_modify_program() {
 
             setTimeout(function () {
                 $('#error-message').fadeOut();
-            }, 10000);
+            }, AppSession.errorMessageDuration);
         }
     });
 }

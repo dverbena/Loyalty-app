@@ -1,6 +1,3 @@
-const TIMEOUT = 2000;
-const TIMEOUT_REWARD_BANNER = 5000;
-
 const sendMessageToCustomersPage = (message) => {
     AppSession.messageToCustomerPage = { msg: message, type: 'info' };
 }
@@ -26,7 +23,7 @@ const showRewardBanner = () => {
                 
                 AppSession.showRewardBanner = false;
                 AppSession.rewardSempahore = false;
-            }, TIMEOUT_REWARD_BANNER);
+            }, AppSession.successMessageDuration);
         }
     }
 }
@@ -51,7 +48,7 @@ const showMessages = () => {
                 AppSession.messageToCustomerPage.msg = null;
                 AppSession.messageToCustomerPage.type = null;
 
-            }, TIMEOUT);
+            }, AppSession.messageToCustomerPage.type === 'info' ? AppSession.successMessageDuration : AppSession.errorMessageDuration);
         }
     }
 }

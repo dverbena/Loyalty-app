@@ -33,7 +33,7 @@ def log_access_endpoint(current_user):
 
     existing_user = db.query(User).filter(User.username == data.username).first()
     if existing_user:
-        return jsonify({"error": "User already exists"}), 400
+        return jsonify({"error": "Utenza già esistente"}), 400
 
     hashed_password = generate_password_hash(data.password)
     new_user = User(username=data.username, password=hashed_password)
@@ -63,12 +63,43 @@ def login():
     token = jwt.encode(
         {
             "user_id": user.id,
-            "exp": datetime.now(timezone.utc) + timedelta(days=30),
+            "exp": datetime.now(timezone.utc) + timedelta(days=1),
         },
         os.getenv("SECRET_KEY"),
         algorithm="HS256",
     )
     return jsonify({"token": token})
+
+@bp.route('/password_update', methods=['PUT'])
+@token_required
+def update_password(current_user):
+    try:
+        # Log the start of the request processing
+        logger.info(f"Received request to update password for user {current_user.username}")
+
+        # Validate the input data using Pydantic
+        data = PasswordRequest(**request.get_json())
+        logger.debug(f"Validated input data: {data.dict()}")
+
+    except ValidationError as e:
+        logger.error(f"Validation error: {str(e)}")  # Log the validation error
+        return jsonify({"error": str(e)}), 400    
+
+    db = next(get_db())
+
+    existing_user = db.query(User).filter(User.id == current_user.id).first()
+    if not existing_user:
+        return jsonify({"error": "Utenza inesistente"}), 400
+    
+    existing_user.password = generate_password_hash(data.password)
+    db.commit()
+
+    logger.info(f"User password updated: {existing_user.username}")
+
+    # Return customer details if access is logged
+    return jsonify({
+        "message": f"Password aggioranta per l'utente {existing_user.username}"
+    }), 200
 
 @bp.route('/logout', methods=['POST'])
 @token_required

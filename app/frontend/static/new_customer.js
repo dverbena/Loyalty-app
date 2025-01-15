@@ -24,7 +24,7 @@ function initNewCustomer() {
 
                     setTimeout(function () {
                         $('#error-message').fadeOut();
-                    }, 10000);
+                    }, AppSession.errorMessageDuration);
                 }
             });     
         }
@@ -92,7 +92,7 @@ function populateProgramsForCustomer() {
                             // Hide the error message after 10 seconds
                             setTimeout(function() {
                                 $('#error-message').fadeOut();
-                            }, 10000);
+                            }, AppSession.errorMessageDuration);
                         }
                     });
                 }
@@ -168,7 +168,7 @@ function submit_new_or_modify_customer() {
 
             setTimeout(function () {
                 $('#error-message').fadeOut();
-            }, 10000);
+            }, AppSession.errorMessageDuration);
         }
     });
 }

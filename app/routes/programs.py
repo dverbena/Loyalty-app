@@ -189,7 +189,7 @@ def edit_program(current_user, id):
         program = db.query(Program).filter(Program.id == id).first()
         if not program:
             logger.error(f"Program with ID {id} not found.")
-            return jsonify({"error": f"Program with ID {id} not found."}), 404
+            return jsonify({"error": f"Programma avente ID {id} non trovato"}), 404
 
         # Update program fields
         program.name = data.name

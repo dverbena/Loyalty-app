@@ -137,3 +137,6 @@ class ProgramCreateEditRequest(BaseModel):
 class UserRequest(BaseModel):
     username: str = Field(..., description="Username", min_length=3)
     password: str = Field(..., description="User password", min_length=8)
+
+class PasswordRequest(BaseModel):    
+    password: str = Field(..., description="User password", min_length=8)

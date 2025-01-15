@@ -1,4 +1,6 @@
+<div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
 <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+
 <form id="loginForm" class="container mt-5 p-4 border rounded shadow-sm" style="max-width: 400px;">
   <h2 class="text-center mb-4">Login</h2>
 
@@ -13,4 +15,19 @@
   </div>
 
   <button type="submit" class="btn btn-primary w-100">Login</button>
+</form>
+<form id="updatePasswordForm" class="container mt-5 p-4 border rounded shadow-sm" style="max-width: 400px; display: none">
+  <h2 class="text-center mb-4">Cambio password al primo accesso</h2>
+
+  <div class="mb-3">
+    <label for="new_password" class="form-label">Password</label>
+    <input id="new_password" type="password" name="new_password" class="form-control" placeholder="Inserisci la nuova password" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="new_password_confirm" class="form-label">Password</label>
+    <input id="new_password_confirm" type="password" name="new_password_confirm" class="form-control" placeholder="Conferma la nuova password" required>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100">Cambia password</button>
 </form>

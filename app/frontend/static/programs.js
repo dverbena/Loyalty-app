@@ -28,7 +28,7 @@ const showMessagesProgram = () => {
                 AppSession.messageToProgramPage.msg = null;
                 AppSession.messageToProgramPage.type = null;
 
-            }, TIMEOUT_PROGRAM);
+            }, AppSession.messageToProgramPage.type === 'info' ? AppSession.successMessageDuration : AppSession.errorMessageDuration);
         }
     }
 }

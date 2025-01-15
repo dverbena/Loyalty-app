@@ -10,7 +10,10 @@ var AppSession = {
     messageToProgramPage: { msg: null, type: null },
     programSemaphore: {info: false, error: false }, 
     programBeingEdited: null,
-    menuCollapsed: true
+    menuCollapsed: true,
+    lastPageRequested: null,
+    successMessageDuration: 2000,
+    errorMessageDuration: 5000
 };
 
 const AppState = {
@@ -26,6 +29,10 @@ const initializeApp = () => {
 
 // Navigation Logic
 const navigateTo = (page) => {
+    if(page != 'login') {
+        AppSession.lastPageRequested = page;
+    }
+
     const token = localStorage.getItem('token');
     if (!token) page = 'login'; //force login
     
@@ -85,6 +92,11 @@ const navigateTo = (page) => {
                                             event.preventDefault();
                                             validateAndSubmitLogin(event);
                                         });
+                                        
+                                        $('#updatePasswordForm').on('submit', function(event) {
+                                            event.preventDefault();
+                                            validateAndSubmitChangePassword(event);
+                                        });
                                     }
                                 }
                             }
@@ -94,8 +106,13 @@ const navigateTo = (page) => {
             });
         },
         error: function(xhr, status, error) {
-            console.error("Navigation error:", error);
-            contentDiv.innerHTML = `<h1 class="alert alert-danger mt-3">Errore: ${(xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : error)} </h1>`;
+            if(xhr.status === 401) {
+                navigateTo('login');
+            }
+            else {
+                console.error("Navigation error:", error);
+                contentDiv.innerHTML = `<h1 class="alert alert-danger mt-3">Errore: ${(xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : error)} </h1>`;
+            }
         }
     });
     
