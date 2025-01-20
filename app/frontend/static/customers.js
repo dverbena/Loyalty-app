@@ -190,7 +190,7 @@ function filterCustomers(event) {
                 response.forEach(function(customer) {
                     $('#customers_table tbody').append(`
                         <tr class="selectable-row" data-id="${customer.id}">
-                            <td class="d-flex flex-column flex-sm-row text-center" style="white-space: nowrap;">
+                            <td style="white-space: nowrap;">
                                 <!-- Action buttons with Font Awesome icons -->
                                 <button title="Check in" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("check_in", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
                                     <i class="fas fa-check"></i> <!-- Edit icon -->

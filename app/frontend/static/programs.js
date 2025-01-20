@@ -83,7 +83,7 @@ function filterPrograms(event) {
                 response.forEach(function(program) {
                     $('#programs_table tbody').append(`
                         <tr class="selectable-row" data-id="${program.id}">
-                            <td class="d-flex flex-column flex-sm-row text-center" style="white-space: nowrap;">
+                            <td style="white-space: nowrap;">
                                 <button title="Modifica" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleActionProgram("update", ${program.id}, "${program.name}")'>
                                     <i class="fas fa-edit"></i>
                                 </button>

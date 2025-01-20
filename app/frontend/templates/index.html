@@ -21,47 +21,46 @@
     <!-- Sidebar Navigation -->
     <div class="container-fluid">
         <div class="row flex-nowrap">
-            <div id="sidebar" class="col-auto col-3 px-0 bg-dark" style="display:none">
-                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                    <ul class="nav nav-pills flex-column mb-auto mb-0 align-items-center align-items-sm-start"
-                        id="menu">                        
+            <div id="sidebar" class="col-auto col-10 col-md-4 px-0 bg-dark" style="display:none">
+                <div class="d-flex flex-column align-items-start px-3 pt-2 text-white min-vh-100">
+                    <ul class="nav nav-pills flex-column mb-auto mb-0" id="menu">                        
                         <li>
                             <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <i class="fas fa-gifts"></i> <span class="d-none d-sm-inline">Programmi fedelt&agrave;<i class="ms-2 fas fa-caret-right"></i></span>
+                                <i class="fas fa-gifts"></i> <span class="d-sm-inline">Programmi fedelt&agrave;<i class="ms-2 fas fa-caret-right"></i></span>
                             </a>
                             <ul class="collapse nav flex-column ms-4" id="submenu1" data-bs-parent="#menu">
                                 <li class="w-100">
-                                    <a href="#" class="nav-link px-0" onclick="navigateTo('programs')">
-                                        <i class="fas fa-list"></i><span class="ms-1 d-none d-sm-inline">Lista</span>
+                                    <a href="#" class="nav-link px-0" onclick="toggleMenu(); navigateTo('programs')">
+                                        <i class="fas fa-list"></i><span class="ms-1 d-sm-inline">Lista</span>
                                     </a>
                                 </li>
                                 <li class="w-100">
-                                    <a href="#" class="nav-link px-0" onclick="navigateTo('new_program')">
-                                        <i class="fas fa-plus"></i><span class="ms-1 d-none d-sm-inline">Crea</span>
+                                    <a href="#" class="nav-link px-0" onclick="toggleMenu(); navigateTo('new_program')">
+                                        <i class="fas fa-plus"></i><span class="ms-1 d-sm-inline">Crea</span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
                         <li>
                             <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                                <i class="fas fa-users"></i> <span class="d-none d-sm-inline">Soci<i class="ms-2 fas fa-caret-right"></i></span>
+                                <i class="fas fa-users"></i> <span class="d-sm-inline">Soci<i class="ms-2 fas fa-caret-right"></i></span>
                             </a>
                             <ul class="collapse nav flex-column ms-4" id="submenu2" data-bs-parent="#menu">
                                 <li class="w-100">
-                                    <a href="#" class="nav-link px-0" onclick="navigateTo('customers')">
-                                        <i class="fas fa-list"></i><span class="ms-1 d-none d-sm-inline">Lista</span>
+                                    <a href="#" class="nav-link px-0" onclick="toggleMenu(); navigateTo('customers')">
+                                        <i class="fas fa-list"></i><span class="ms-1 d-sm-inline">Lista</span>
                                     </a>
                                 </li>
                                 <li class="w-100">
-                                    <a href="#" class="nav-link px-0" onclick="navigateTo('new_customer')">
-                                        <i class="fas fa-plus"></i><span class="ms-1 d-none d-sm-inline">Crea</span>
+                                    <a href="#" class="nav-link px-0" onclick="toggleMenu(); navigateTo('new_customer')">
+                                        <i class="fas fa-plus"></i><span class="ms-1 d-sm-inline">Crea</span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
                         <li>
-                            <a href="#" class="nav-link px-0 align-middle" onclick="navigateTo('scan')">
-                                <i class="fas fa-camera"></i><span class="ms-1 d-none d-sm-inline">Scansiona QR</span>
+                            <a href="#" class="nav-link px-0 align-middle" onclick="toggleMenu(); navigateTo('scan')">
+                                <i class="fas fa-camera"></i><span class="ms-1 d-sm-inline">Scansiona QR</span>
                             </a>
                         </li>
                     </ul>
@@ -69,7 +68,7 @@
                     <div class="dropdown pb-4">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                            <span class="d-none d-sm-inline mx-1">loser</span>
+                            <span class="d-sm-inline mx-1">user</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
                             <li><a class="dropdown-item" href="#">New project...</a></li>
@@ -82,15 +81,15 @@
                         </ul>
                     </div> -->
                     <div>
-                        <a href="#" onclick="logout();" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <i class="fas fa-arrow-right-from-bracket"></i><span class="ms-1 d-none d-sm-inline">Logout</span>
+                        <a href="#" onclick="toggleMenu(); logout();" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                            <i class="fas fa-arrow-right-from-bracket"></i><span class="ms-1 d-sm-inline">Logout</span>
                         </a>
                     </div>
                 </div>
             </div>
-            <div id="rightPane" class="col-auto col-12 px-0">
+            <div id="rightPane" class="col-auto col-12 col-md-12 px-0">
                 <div class="bg-dark" style="padding-top: 5px; padding-bottom: 5px; width: 100%;">
-                    <a href="#" onclick="toggleMenu();" class="nav-link px-0 align-middle" style="display: inline; font-size: 2em;">
+                    <a id="menutrigger" href="#" onclick="toggleMenu();" class="nav-link px-0 align-middle" style="display: inline; font-size: 2em;">
                         <i id="bars" class="nav nav-link fas fa-bars" style="display: inline; margin-right: 10px;"></i>
                     </a>
                     <img src="{{ url_for('frontend.static', filename='logo/logo.png') }}" style="display: inline; width: 60px;">

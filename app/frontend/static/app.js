@@ -31,10 +31,17 @@ const initializeApp = () => {
 const navigateTo = (page) => {
     if(page != 'login') {
         AppSession.lastPageRequested = page;
+        $("#menutrigger").show();
+    }
+    else {
+        $("#menutrigger").hide();
     }
 
     const token = localStorage.getItem('token');
-    if (!token) page = 'login'; //force login
+    if (!token) {
+        page = 'login'; //force login
+        $("#menutrigger").hide();
+    }
     
     const contentDiv = document.getElementById('main-content');
 
@@ -130,11 +137,13 @@ const toggleMenu = () => {
     if(AppSession.menuCollapsed) {
         $("#sidebar").show();
         $("#rightPane").removeClass("col-12");
-        $("#rightPane").addClass("col-9");
+        $("#rightPane").addClass("col-2");
+        $("#rightPane").addClass("col-md-8");
     }
     else {
         $("#sidebar").hide();
-        $("#rightPane").removeClass("col-9");
+        $("#rightPane").removeClass("col-2");
+        $("#rightPane").removeClass("col-md-8");
         $("#rightPane").addClass("col-12");
     }
 
