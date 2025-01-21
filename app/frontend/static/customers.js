@@ -85,7 +85,7 @@ function handleAction(action, id, name, last_name) {
                         data: `{"id": ${id}, "imported": false, "reward": ${responseReward.reward_due}}`,   // Send the form data as JSON
                         success: function (response) {
                             if(responseReward.reward_due) sendRewardMessageToCustomersPage();
-                            else sendMessageToCustomersPage(`Check in di ${response.customer.name} ${response.customer.last_name} riuscito!`);
+                            else sendMessageToCustomersPage(`Check in di ${response.customer.name} ${response.customer.last_name} (${responseReward.program}) riuscito!`);
                         },
                         error: function (xhr, status, error) {
                             sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : ""))

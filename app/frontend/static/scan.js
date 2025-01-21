@@ -128,13 +128,12 @@ const handleScan = (decodedText) => {
                 $.ajax({
                     type: 'POST',
                     headers: { 'Authorization': localStorage.getItem('token') },
-                    headers: { 'Authorization': localStorage.getItem('token') },
                     url: 'accesses/add',
                     contentType: 'application/json',
                     data: JSON.stringify({ qr_code: decodedText, imported: false, reward: responseReward.reward_due }),
                     success: function (responseAdd) {
                         if(responseReward.reward_due) sendRewardMessageToCustomersPage();
-                        sendMessageToCustomersPage(`Check in di ${responseAdd.customer.name} ${responseAdd.customer.last_name} riuscito!`);
+                        sendMessageToCustomersPage(`Check in di ${responseAdd.customer.name} ${responseAdd.customer.last_name} (${responseReward.program}) riuscito!`);
 
                         navigateTo('customers');
                     },

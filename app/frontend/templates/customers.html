@@ -1,14 +1,13 @@
 
 <div id="reward" class="alert alert-success mt-3" style="display: none;"><h1>Ingresso gratuito!</h1></div>
-<div id="divCustomers" class="container mt-4">
-    <h1 class="mb-4" style="color: {{ theme_color }};">Elenco soci</h1>
-    
-    <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
-    <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
+<div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+<div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
+
+<div id="divCustomers" class="container-fluid mt-4">
 
     <!-- Filter Form -->
     <form id="filterForm" class="mb-4">
-        <div class="row">
+        <div class="container-fluid p-4 row border rounded shadow-sm table-responsive row bg-dark">
             <div class="col-md-4" style="margin-bottom: 5px">
                 <input id="filterName" type="text" name="name" class="form-control" placeholder="Filtra per nome">
             </div>
@@ -22,8 +21,8 @@
     </form>
 
     <!-- Customers Table -->
-    <div class="table-responsive">
-        <table id="customers_table" class="table table-bordered table-striped" style="width: 100%;">
+    <div class="table-responsive container-fluid p-4 row border rounded shadow-sm table-responsive bg-dark">
+        <table id="customers_table" class="table table-bordered my-table" style="width: 100%;">
             <thead>
                 <tr>
                     <th style="width: 1%; white-space: nowrap;"></th>

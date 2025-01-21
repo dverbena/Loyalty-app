@@ -16,6 +16,15 @@ var AppSession = {
     errorMessageDuration: 5000
 };
 
+var AppTitles = {
+    customers: "Elenco soci",
+    login: "Login",
+    programs: "Programmi fedeltà",
+    new_program: "Nuovo (modifica) programma",
+    new_customer: "Nuovo (modifica) socio",
+    scan: "Scansione QR"
+}
+
 const AppState = {
     cameraInitialized: false,
     html5QrcodeScanner: null,
@@ -44,6 +53,7 @@ const navigateTo = (page) => {
     }
     
     const contentDiv = document.getElementById('main-content');
+    $("#apptitle").text(AppTitles[page]);
 
     // Fetch and replace content
     $.ajax({
@@ -136,14 +146,22 @@ const logout = () => {
 const toggleMenu = () => {
     if(AppSession.menuCollapsed) {
         $("#sidebar").show();
+
         $("#rightPane").removeClass("col-12");
+        
         $("#rightPane").addClass("col-2");
+        $("#rightPane").addClass("col-sm-7");
         $("#rightPane").addClass("col-md-8");
+        $("#rightPane").addClass("col-lg-9");
     }
     else {
         $("#sidebar").hide();
+
         $("#rightPane").removeClass("col-2");
+        $("#rightPane").removeClass("col-sm-7");
         $("#rightPane").removeClass("col-md-8");
+        $("#rightPane").removeClass("col-lg-9");
+
         $("#rightPane").addClass("col-12");
     }
 

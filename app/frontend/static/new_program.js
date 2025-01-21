@@ -7,9 +7,7 @@ function initNewProgram() {
 
         if(AppSession.programBeingEdited) {
             $('#buttonsCreate').hide();
-            $('#titleNew').hide();
-            $('#buttonsEdit').show();  
-            $('#titleEdit').show();      
+            $('#buttonsEdit').show();    
 
             $.ajax({
                 type: 'GET',
@@ -50,9 +48,7 @@ function initNewProgram() {
         }
         else  {
             $('#buttonsCreate').show();
-            $('#titleNew').show();
             $('#buttonsEdit').hide(); 
-            $('#titleEdit').hide();    
         }
         
         $("input[required], select[required]").each(function () {

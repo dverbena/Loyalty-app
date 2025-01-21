@@ -2,10 +2,8 @@ function initNewCustomer() {
     $(document).ready(function() {
         if(AppSession.customerBeingEdited) {
             $('#buttonsCreate').hide();
-            $('#titleNew').hide();     
             $('#access_import_div').hide();
-            $('#buttonsEdit').show();  
-            $('#titleEdit').show();       
+            $('#buttonsEdit').show();    
 
             $.ajax({
                 type: 'GET',
@@ -30,10 +28,8 @@ function initNewCustomer() {
         }
         else  {
             $('#buttonsCreate').show();
-            $('#titleNew').show();     
             $('#access_import_div').show();
             $('#buttonsEdit').hide(); 
-            $('#titleEdit').hide();    
         }
         
         $("input[required], select[required]").each(function () {

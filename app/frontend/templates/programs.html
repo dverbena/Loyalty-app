@@ -1,22 +1,21 @@
-<div id="divPrograms" class="container mt-4">
-    <h1 class="mb-4" style="color: {{ theme_color }};">Programmi fedelt&agrave;</h1>
-    
-    <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
-    <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
+<div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+<div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
+
+<div id="divPrograms" class="container-fluid mt-4">
 
     <!-- Filter Form -->
 
     <!-- Programs Table -->
-    <div class="table-responsive">
-        <table id="programs_table" class="table table-bordered table-striped" style="width: 100%;">
+    <div class="container-fluid p-4 row border rounded shadow-sm table-responsive bg-dark table-responsive">
+        <table id="programs_table" class="table table-bordered my-table" style="width: 100%;">
             <thead>
                 <tr>
-                    <th style="width: 1%; white-space: nowrap;"></th>
-                    <th>Nome</th>
-                    <th>Valido dal</th>
-                    <th>Valido fino al</th>
-                    <th>Ingressi per ottenere premio</th>                    
-                    <th>Ingressi omaggio</th>
+                    <th scope="col" style="width: 1%; white-space: nowrap;"></th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Valido dal</th>
+                    <th scope="col">Valido fino al</th>
+                    <th scope="col">Ingressi per ottenere premio</th>
+                    <th scope="col">Ingressi omaggio</th>
                 </tr>
             </thead>
             <tbody>

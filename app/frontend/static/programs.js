@@ -83,14 +83,14 @@ function filterPrograms(event) {
                 response.forEach(function(program) {
                     $('#programs_table tbody').append(`
                         <tr class="selectable-row" data-id="${program.id}">
-                            <td style="white-space: nowrap;">
+                            <th scope="row" style="white-space: nowrap;">
                                 <button title="Modifica" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleActionProgram("update", ${program.id}, "${program.name}")'>
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button title="Elimina" class="btn btn-danger mb-2 mb-sm-0" onclick='handleActionProgram("delete", ${program.id}, "${program.name}")'>
                                     <i class="fas fa-trash"></i> <!-- Delete icon -->
                                 </button>  
-                            </td>                          
+                            </th>                          
                             <td>${program.name}</td>
                             <td>` + moment(program.valid_from).format('DD/MM/YYYY') + `</td>
                             <td>` + moment(program.valid_to).format('DD/MM/YYYY') + `</td>

@@ -11,6 +11,12 @@ import logging
 # Initialize logger
 logger = logging.getLogger(__name__)
 
+class RewardDue():    
+    def __init__(self, customer_id, program_name, reward_due):
+        self.username = customer_id
+        self.program_name = program_name
+        self.reward_due = reward_due
+
 def add_customer_to_program(db: Session, customer_id: int, program_id: int):
     # Fetch the customer and program from the database
     try:
@@ -153,15 +159,7 @@ def get_customer_programs_for_current_year(db: Session, customer_id: int):
         extract('year', Program.valid_to) >= current_year  # Filter programs valid to the current year
     ).all()
 
-def is_reward_due(db: Session, customer_id: int) -> bool:
-    """
-    Check if a customer is due for a reward based on their access logs and program rules.
-
-    :param db: SQLAlchemy session object.
-    :param customer_id: ID of the customer.
-    :param program_id: ID of the program to check.
-    :return: True if a reward is due, False otherwise.
-    """
+def is_reward_due(db: Session, customer_id: int) -> RewardDue:
     # Get the current year
     now = datetime.now(timezone.utc)
     current_year = now.year
@@ -171,7 +169,7 @@ def is_reward_due(db: Session, customer_id: int) -> bool:
     
     if not programs:
         logger.debug(f"No enrollment in any program found for customer {customer_id} in {current_year}")
-        return False    
+        return RewardDue(customer_id, "Nussun programma", False)    
     else:
         program = programs[0]
         logger.debug(f"Program found: {program.name}")
@@ -192,7 +190,7 @@ def is_reward_due(db: Session, customer_id: int) -> bool:
         num_accesses = len(access_logs) + 1 # check if next access is supposed to be a reward 
 
         if num_accesses == 1: # no access so far, no reward
-            return False
+            return RewardDue(customer_id, program.name, False)    
         else:
             logger.debug(f"Computing access #{num_accesses} for customer id {customer_id} in {current_year}")
 
@@ -202,6 +200,6 @@ def is_reward_due(db: Session, customer_id: int) -> bool:
 
             for threshold in reward_due_thresholds:
                 if (num_accesses + threshold) % reward_cycle == 0:
-                    return True
+                    return RewardDue(customer_id, program.name, True)  
 
-            return False;
+            return RewardDue(customer_id, program.name, False)    

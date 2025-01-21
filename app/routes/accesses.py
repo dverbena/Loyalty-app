@@ -120,7 +120,8 @@ def is_customer_reward_due(current_user, cid):
 
     return jsonify({
         "customer_id": cid,
-        "reward_due": reward_due
+        "reward_due": reward_due.reward_due,
+        "program": reward_due.program_name
     }), 200
 
 @bp.route("/reward_due_qr/<qr>", methods=["GET"])
@@ -141,5 +142,6 @@ def is_customer_reward_due_qr(current_user, qr):
 
     return jsonify({
         "customer_id": customer.id,
-        "reward_due": reward_due
+        "reward_due": reward_due.reward_due,
+        "program": reward_due.program_name
     }), 200

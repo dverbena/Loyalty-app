@@ -2,11 +2,28 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Trebuchet MS', Helvetica, sans-serif;
+    color: #fefefe;
 }
 
 .navbar-brand {
     font-size: 15px;
     font-weight: bold;
+}
+
+
+.my-table thead {
+    background-color: var(--user-color-light);
+    color: #454545;
+}
+
+.my-table tbody tr:nth-child(odd) {
+    background-color: transparent; 
+    color: #fefefe;
+}
+
+.my-table tbody tr:nth-child(even) {
+    background-color: var(--user-color-light);
+    color: #454545;
 }
 
 /*

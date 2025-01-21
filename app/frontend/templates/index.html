@@ -9,19 +9,32 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('frontend.static', filename='style.css') }}">    
     <style>
-        .bg-dark {
-            background-color: {{ theme_color }} !important; 
+        :root {
+            --user-color: #9CC545; /* User-defined color */
+            --user-color-light: hsl(
+                calc(var(--user-hue, 75)),
+                calc(var(--user-saturation, 40%)),
+                calc(var(--user-lightness, 65%))
+            )
         }
+
+        .bg-dark{
+            background-color: var(--user-color) !important;
+        }
+
+        .bg-light {
+            background-color: var(--user-color-light) !important;
+    }    
     </style>
+    <link rel="stylesheet" href="{{ url_for('frontend.static', filename='style.css') }}">    
 </head>
 
-<body>
+<body class="bg-light">
     <!-- Sidebar Navigation -->
     <div class="container-fluid">
         <div class="row flex-nowrap">
-            <div id="sidebar" class="col-auto col-10 col-md-4 px-0 bg-dark" style="display:none">
+            <div id="sidebar" class="col-auto col-10 col-sm-5 col-md-4 col-lg-3 px-0 bg-dark" style="display:none">
                 <div class="d-flex flex-column align-items-start px-3 pt-2 text-white min-vh-100">
                     <ul class="nav nav-pills flex-column mb-auto mb-0" id="menu">                        
                         <li>
@@ -87,15 +100,15 @@
                     </div>
                 </div>
             </div>
-            <div id="rightPane" class="col-auto col-12 col-md-12 px-0">
+            <div id="rightPane" class="col-auto col-12 px-0">
                 <div class="bg-dark" style="padding-top: 5px; padding-bottom: 5px; width: 100%;">
                     <a id="menutrigger" href="#" onclick="toggleMenu();" class="nav-link px-0 align-middle" style="display: inline; font-size: 2em;">
                         <i id="bars" class="nav nav-link fas fa-bars" style="display: inline; margin-right: 10px;"></i>
                     </a>
                     <img src="{{ url_for('frontend.static', filename='logo/logo.png') }}" style="display: inline; width: 60px;">
-                    <h1 class="ms-1" style="display: inline; color: white; vertical-align: middle;">{{app_title}}</h1>
+                    <h1 id="apptitle" class="ms-1" style="display: inline; vertical-align: middle;"></h1>
                 </div>
-                <div id="main-content" class="container">
+                <div id="main-content" class="container-fluid">
                 </div>
             </div>
         </div>
