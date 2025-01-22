@@ -12,7 +12,7 @@ var AppSession = {
     programBeingEdited: null,
     menuCollapsed: true,
     lastPageRequested: null,
-    successMessageDuration: 2000,
+    successMessageDuration: 3000,
     errorMessageDuration: 5000
 };
 

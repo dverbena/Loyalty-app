@@ -41,9 +41,10 @@ def token_required(f):
             return jsonify({"error": "Autenticazione mancante"}), 401
 
         try:
-            db = next(get_db())
             data = jwt.decode(token, os.getenv("SECRET_KEY"), algorithms=["HS256"])
-            current_user = db.query(User).filter(User.id == data["user_id"]).first()
+
+            with next(get_db()) as db:
+                current_user = db.query(User).filter(User.id == data["user_id"]).first()
 
             if not current_user:
                 raise jwt.InvalidTokenError

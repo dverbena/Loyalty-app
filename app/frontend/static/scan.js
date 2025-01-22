@@ -124,6 +124,7 @@ const handleScan = (decodedText) => {
         $.ajax({
             type: 'GET',
             url: `accesses/reward_due_qr/${decodedText}`,
+            headers: { 'Authorization': localStorage.getItem('token') },
             success: function (responseReward) {//sendRewardMessageToCustomersPage
                 $.ajax({
                     type: 'POST',
@@ -132,10 +133,19 @@ const handleScan = (decodedText) => {
                     contentType: 'application/json',
                     data: JSON.stringify({ qr_code: decodedText, imported: false, reward: responseReward.reward_due }),
                     success: function (responseAdd) {
-                        if(responseReward.reward_due) sendRewardMessageToCustomersPage();
-                        sendMessageToCustomersPage(`Check in di ${responseAdd.customer.name} ${responseAdd.customer.last_name} (${responseReward.program}) riuscito!`);
-
-                        navigateTo('customers');
+                        //if(responseReward.reward_due) sendRewardMessageToCustomersPage();
+                        
+                        //sendMessageToCustomersPage(`Check in di ${responseAdd.customer.name} ${responseAdd.customer.last_name} (${responseReward.program}) riuscito!`);
+                        //navigateTo('customers');
+                        if(responseReward.reward_due) $("#reward").show();
+                        $("#success-message").text(`Check in di ${responseAdd.customer.name} ${responseAdd.customer.last_name} (${responseReward.program}) riuscito!`).show();
+                        
+                        setTimeout(() => {
+                            $('#success-message').fadeOut();
+                            $('#reward').fadeOut();
+                            
+                            startScan(); // Restart scanning
+                        }, AppSession.successMessageDuration);
                     },
                     error: function (xhr) {
                         const errorMessage = xhr.responseJSON?.error || xhr.error || "Errore generico";

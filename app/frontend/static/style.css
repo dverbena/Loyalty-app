@@ -10,6 +10,9 @@ body {
     font-weight: bold;
 }
 
+.select2-dropdown li {
+    color: #454545;
+}
 
 .my-table thead {
     background-color: var(--user-color-light);

@@ -54,8 +54,8 @@ def list_customers(current_user):
 def get_customer_by_id(current_user, id):    
     logger.info(f"Fetching info for customer_id: {id}")
 
-    db = next(get_db())
-    customer = db.query(Customer).filter(Customer.id == id).first()
+    with next(get_db()) as db:
+        customer = db.query(Customer).filter(Customer.id == id).first()
     
     if not customer:
         logger.warning(f"Customer with id {id} not found.")
@@ -86,8 +86,8 @@ def get_customer_by_qr(current_user, qr_code):
         logger.error(f"Invalid QR code format: {str(e)}")
         return jsonify({"error": f"Invalid QR code: {str(e)}"}), 400
 
-    db = next(get_db())
-    customer = db.query(Customer).filter(Customer.qr_code == validated_data.qr_code).first()
+    with next(get_db()) as db:
+        customer = db.query(Customer).filter(Customer.qr_code == validated_data.qr_code).first()
 
     if not customer:
         logger.warning(f"Customer with QR code {qr_code} not found.")
@@ -128,15 +128,15 @@ def get_customers_by_name(current_user):
     #     logger.error("Neither 'name' nor 'last_name' was provided.")
     #     return jsonify({"error": "At least one of 'name' or 'last_name' must be provided."}), 400
 
-    db = next(get_db())
-
     if not query_params.name and not query_params.last_name:
         return list_customers()
     
     logger.debug(f"Searching for customers with name containing: {query_params.name}")
     
     # Build the query based on the available parameters
-    query = db.query(Customer)
+    with next(get_db()) as db:
+        query = db.query(Customer)
+
     if query_params.name:
         query = query.filter(Customer.name.ilike(f"%{query_params.name}%"))
     if query_params.last_name:
@@ -171,8 +171,8 @@ def create_new_customer(current_user):
         }), 400
 
     try:
-        db = next(get_db())
-        customer = create_customer(db, data.name, data.last_name, data.email, data.address, data.access_import, data.programs)
+        with next(get_db()) as db:
+            customer = create_customer(db, data.name, data.last_name, data.email, data.address, data.access_import, data.programs)
 
         logger.info(f"Created new customer with ID: {customer.id}, Name: {customer.name} {customer.last_name}")
 
@@ -208,28 +208,28 @@ def edit_customer(current_user, id):
         }), 400
 
     try:
-        db = next(get_db())
-
         # Fetch the existing customer
-        customer = db.query(Customer).filter(Customer.id == id).first()
-        if not customer:
-            logger.error(f"Customer with ID {id} not found.")
-            return jsonify({"error": f"Customer with ID {id} not found."}), 404
+        with next(get_db()) as db:
+            customer = db.query(Customer).filter(Customer.id == id).first()
 
-        email_changed = (customer.email != data.email)
+            if not customer:
+                logger.error(f"Customer with ID {id} not found.")
+                return jsonify({"error": f"Customer with ID {id} not found."}), 404
 
-        # Update customer fields
-        customer.name = data.name
-        customer.last_name = data.last_name
-        customer.email = data.email
-        customer.address = data.address
-        
-        # Update the programs (assuming a separate function handles many-to-many updates)
-        update_customer_programs(db, id, data.programs)
+            email_changed = (customer.email != data.email)
 
-        # Commit changes to the database
-        db.commit()
-        logger.info(f"Updated customer with ID: {customer.id}")
+            # Update customer fields
+            customer.name = data.name
+            customer.last_name = data.last_name
+            customer.email = data.email
+            customer.address = data.address
+            
+            # Update the programs (assuming a separate function handles many-to-many updates)
+            update_customer_programs(db, id, data.programs)
+
+            # Commit changes to the database
+            db.commit()
+            logger.info(f"Updated customer with ID: {customer.id}")
 
         return jsonify({
             "id": customer.id,
@@ -330,8 +330,8 @@ def send_qr_code(current_user):
                 "error": f"Invalid data provided: {str(e)}"
             }), 400
 
-        db = next(get_db())
-        customer = db.query(Customer).filter(Customer.id == data.id).first()
+        with next(get_db()) as db:
+            customer = db.query(Customer).filter(Customer.id == data.id).first()
     
         if not customer:
             logger.warning(f"Customer with id {id} not found.")
@@ -377,8 +377,8 @@ def delete_customer(current_user, id):
     """
     logger.info(f"Received request to delete customer with ID: {id}")
 
-    db = next(get_db())
-    customer = db.query(Customer).filter(Customer.id == id).first()
+    with next(get_db()) as db:
+        customer = db.query(Customer).filter(Customer.id == id).first()
 
     if not customer:
         logger.warning(f"Customer with ID {id} not found.")

@@ -31,24 +31,25 @@ def log_access_endpoint(current_user):
         logger.error("Neither 'id' nor 'qr_code' was provided.")
         return jsonify({"error": "At least one of 'id' or 'qr_code' must be provided."}), 400
 
-    if(data.qr_code):
-        qr_code = data.qr_code
-        logger.info(f"Received QR code: {qr_code}")
+    with next(get_db()) as db:
+        if(data.qr_code):
+            qr_code = data.qr_code
+            logger.info(f"Received QR code: {qr_code}")
 
-        db = next(get_db())
-        customer = log_access(db, qr_code, data.imported, data.reward)
-        if not customer:
-            logger.error(f"Invalid QR code: {qr_code}. Customer not found.")
-            return jsonify({"error": "Invalid QR code"}), 404
-    else:
-        id = data.id
-        logger.info(f"Received ID: {id}")
+            customer = log_access(db, qr_code, data.imported, data.reward)
 
-        db = next(get_db())
-        customer = log_access(db, id, data.imported, data.reward)
-        if not customer:
-            logger.error(f"Invalid ID: {id}. Customer not found.")
-            return jsonify({"error": "Invalid customer ID"}), 404
+            if not customer:
+                logger.error(f"Invalid QR code: {qr_code}. Customer not found.")
+                return jsonify({"error": "Invalid QR code"}), 404
+        else:
+            id = data.id
+            logger.info(f"Received ID: {id}")
+
+            customer = log_access(db, id, data.imported, data.reward)
+
+            if not customer:
+                logger.error(f"Invalid ID: {id}. Customer not found.")
+                return jsonify({"error": "Invalid customer ID"}), 404
 
     logger.info(f"Access granted for customer: {customer.name} {customer.last_name}")
 
@@ -67,15 +68,15 @@ def log_access_endpoint(current_user):
 def get_access_logs_endpoint(current_user, id):
     logger.info(f"Fetching accesses for customer_id: {id}")
 
-    db = next(get_db())
-    customer = db.query(Customer).filter(Customer.id == id).first()
+    with next(get_db()) as db:
+        customer = db.query(Customer).filter(Customer.id == id).first()
 
-    if not customer:
-        logger.error(f"Customer not found for ID: {id}")
-        return jsonify({"error": "Customer not found"}), 404
+        if not customer:
+            logger.error(f"Customer not found for ID: {id}")
+            return jsonify({"error": "Customer not found"}), 404
 
-    logs = get_access_logs_without_imported(db, id)    
-    logger.debug(f"Fetched {len(logs)} accesses for customer_id: {id}")
+        logs = get_access_logs_without_imported(db, id)    
+        logger.debug(f"Fetched {len(logs)} accesses for customer_id: {id}")
 
     return jsonify([{
         "id": log.id,
@@ -90,8 +91,8 @@ def get_access_logs_endpoint(current_user, id):
 def get_access_logs_by_qr(current_user, qr_code):
     logger.info(f"Fetching accesses for QR code: {qr_code}")
 
-    db = next(get_db())
-    customer = db.query(Customer).filter(Customer.qr_code == qr_code).first()
+    with next(get_db()) as db:
+        customer = db.query(Customer).filter(Customer.qr_code == qr_code).first()
 
     if not customer:
         logger.error(f"Customer not found for QR code: {qr_code}")
@@ -129,8 +130,8 @@ def is_customer_reward_due(current_user, cid):
 def is_customer_reward_due_qr(current_user, qr):
     logger.info(f"Checking if customer {qr} is due for a reward")
 
-    db = next(get_db())    
-    customer = db.query(Customer).filter(Customer.qr_code == qr).first()
+    with next(get_db()) as db:
+        customer = db.query(Customer).filter(Customer.qr_code == qr).first()
 
     if not customer:
         logger.error(f"Customer not found for QR code: {qr}")

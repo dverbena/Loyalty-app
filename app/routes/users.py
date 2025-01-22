@@ -29,9 +29,9 @@ def log_access_endpoint(current_user):
         logger.error(f"Validation error: {str(e)}")  # Log the validation error
         return jsonify({"error": str(e)}), 400    
 
-    db = next(get_db())
+    with next(get_db()) as db:
+        existing_user = db.query(User).filter(User.username == data.username).first()
 
-    existing_user = db.query(User).filter(User.username == data.username).first()
     if existing_user:
         return jsonify({"error": "Utenza già esistente"}), 400
 
@@ -49,13 +49,16 @@ def log_access_endpoint(current_user):
 
 @bp.route('/login', methods=['POST'])
 def login():
+    # Log the start of the request processing
+    logger.info("Received request to login a user")
+
     data = request.get_json()
 
     username = data.get('username')
     password = data.get('password')
 
-    db = next(get_db())
-    user = db.query(User).filter(User.username == username).first()
+    with next(get_db()) as db:
+        user = db.query(User).filter(User.username == username).first()
 
     if not user or not check_password_hash(user.password, password):
         return jsonify({"error": "Credenziali non valide"}), 401
@@ -85,16 +88,16 @@ def update_password(current_user):
         logger.error(f"Validation error: {str(e)}")  # Log the validation error
         return jsonify({"error": str(e)}), 400    
 
-    db = next(get_db())
+    with next(get_db()) as db:
+        existing_user = db.query(User).filter(User.id == current_user.id).first()
 
-    existing_user = db.query(User).filter(User.id == current_user.id).first()
-    if not existing_user:
-        return jsonify({"error": "Utenza inesistente"}), 400
-    
-    existing_user.password = generate_password_hash(data.password)
-    db.commit()
+        if not existing_user:
+            return jsonify({"error": "Utenza inesistente"}), 400
+        
+        existing_user.password = generate_password_hash(data.password)
+        db.commit()
 
-    logger.info(f"User password updated: {existing_user.username}")
+        logger.info(f"User password updated: {existing_user.username}")
 
     # Return customer details if access is logged
     return jsonify({
@@ -104,4 +107,7 @@ def update_password(current_user):
 @bp.route('/logout', methods=['POST'])
 @token_required
 def logout(current_user):    
+    # Log the start of the request processing
+    logger.info(f"Received request to logout user {current_user.username}")
+
     return jsonify({"message": f"Utente sloggato"})

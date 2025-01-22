@@ -44,15 +44,17 @@ def create_app():
     with app.app_context():
         from app.database import get_db
         
-        db = next(get_db())
-        admin_user = db.query(User).filter(User.username == "admin").first()
+        with next(get_db()) as db:
+            admin_user = db.query(User).filter(User.username == "admin").first()
 
         if admin_user is None:
             # If no admin user exists, create one
             hashed_password = generate_password_hash("changeme")
             admin_user = User(username="admin", password=hashed_password)
+
             db.add(admin_user)
             db.commit()
+            
             logger.info("Admin user created with username 'admin'.")
 
     # Register blueprints (routes)

@@ -56,8 +56,8 @@ def list_current_programs(current_user):
 def get_program_by_id(current_user, id):    
     logger.info(f"Fetching info for program_id: {id}")
 
-    db = next(get_db())
-    program = db.query(Program).filter(Program.id == id).first()
+    with next(get_db()) as db:
+        program = db.query(Program).filter(Program.id == id).first()
     
     if not program:
         logger.warning(f"Program with id {id} not found.")
@@ -80,10 +80,10 @@ def get_program_by_id(current_user, id):
 def get_customer_by_id(current_user, id):    
     logger.info(f"Fetching programs for customer id: {id}")
 
-    db = next(get_db())
-    programs = db.query(Program).join(
-        Program.customers
-    ).filter(Customer.id == id).all()
+    with next(get_db()) as db:
+        programs = db.query(Program).join(
+            Program.customers
+        ).filter(Customer.id == id).all()
     
     logger.info(f"Found {len(programs)} for customer {id}")
 
@@ -138,35 +138,35 @@ def delete_program(current_user, id):
     """
     logger.info(f"Received request to delete program with ID: {id}")
 
-    db = next(get_db())
-    program = db.query(Program).filter(Program.id == id).first()
+    with next(get_db()) as db:
+        program = db.query(Program).filter(Program.id == id).first()
 
-    if program.customers:  # If there are customers associated with this program
-        logger.warning(f"Program with ID {id} has customers associated to it and cannot be deleted.")
-        return jsonify({"error": "Il programma non puó essere cancellato perché in uso da uno o piú soci"}), 404
+        if program.customers:  # If there are customers associated with this program
+            logger.warning(f"Program with ID {id} has customers associated to it and cannot be deleted.")
+            return jsonify({"error": "Il programma non puó essere cancellato perché in uso da uno o piú soci"}), 404
 
-    if not program:
-        logger.warning(f"Program with ID {id} not found.")
-        return jsonify({"error": "Programma non trovato"}), 404
+        if not program:
+            logger.warning(f"Program with ID {id} not found.")
+            return jsonify({"error": "Programma non trovato"}), 404
 
-    try:
-        db.delete(program)
-        db.commit()
-        logger.info(f"Program with ID {id} deleted successfully.")
-        
-        return jsonify(
-            {
-                "message": f"Program with ID {id} has been deleted.",
-                "program": 
-                { 
-                    "name": f"{program.name}"
-                }
-            }), 200
+        try:
+            db.delete(program)
+            db.commit()
+            logger.info(f"Program with ID {id} deleted successfully.")
+            
+            return jsonify(
+                {
+                    "message": f"Program with ID {id} has been deleted.",
+                    "program": 
+                    { 
+                        "name": f"{program.name}"
+                    }
+                }), 200
 
-    except Exception as e:
-        logger.error(f"Error occurred while deleting program with ID {id}: {str(e)}")
-        db.rollback()
-        return jsonify({ "error": f"An error occurred while deleting the program: {str(e)}" }), 500
+        except Exception as e:
+            logger.error(f"Error occurred while deleting program with ID {id}: {str(e)}")
+            db.rollback()
+            return jsonify({ "error": f"An error occurred while deleting the program: {str(e)}" }), 500
     
 @bp.route("/edit/<int:id>", methods=["PUT"])
 @token_required
@@ -183,24 +183,24 @@ def edit_program(current_user, id):
         }), 400
 
     try:
-        db = next(get_db())
-
         # Fetch the existing program
-        program = db.query(Program).filter(Program.id == id).first()
-        if not program:
-            logger.error(f"Program with ID {id} not found.")
-            return jsonify({"error": f"Programma avente ID {id} non trovato"}), 404
+        with next(get_db()) as db:
+            program = db.query(Program).filter(Program.id == id).first()
 
-        # Update program fields
-        program.name = data.name
-        program.valid_from = data.valid_from
-        program.valid_to = data.valid_to
-        program.num_access_to_trigger = data.num_access_to_trigger
-        program.num_accesses_reward = data.num_accesses_reward
+            if not program:
+                logger.error(f"Program with ID {id} not found.")
+                return jsonify({"error": f"Programma avente ID {id} non trovato"}), 404
 
-        # Commit changes to the database
-        db.commit()
-        logger.info(f"Updated program with ID: {program.id}")
+            # Update program fields
+            program.name = data.name
+            program.valid_from = data.valid_from
+            program.valid_to = data.valid_to
+            program.num_access_to_trigger = data.num_access_to_trigger
+            program.num_accesses_reward = data.num_accesses_reward
+
+            # Commit changes to the database
+            db.commit()
+            logger.info(f"Updated program with ID: {program.id}")
 
         return jsonify({
             "id": program.id,
