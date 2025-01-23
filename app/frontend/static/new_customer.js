@@ -147,15 +147,28 @@ function submit_new_or_modify_customer() {
                     contentType: 'application/json',  // Set content type to JSON
                     data: `{"id": ${response.id}}`  // Send the form data as JSON
                 });
-            }
-
-            //create a message to be shown by the customers page
-            sendMessageToCustomersPage(`Socio ${formData.name} ${formData.last_name} ` + (AppSession.customerBeingEdited ? 'modificato' : 'creato') + ' correttamente');
-
-            AppSession.customerBeingEdited = null;
+            }            
             
-            // If the customer is created/updated successfully, redirect to the customer list or show a success message
-            navigateTo('customers');
+            // If the customer is updated successfully, redirect to the customer list or show a success message
+            if(AppSession.customerBeingEdited) {
+                AppSession.customerBeingEdited = null;
+                sendMessageToCustomersPage(`Socio ${formData.name} ${formData.last_name} modificato correttamente`);
+                navigateTo('customers');
+            }
+            else
+            {
+                $("#success-message").text(`Socio ${formData.name} ${formData.last_name} creato correttamente`).show();
+                                   
+                $('#name').val("");
+                $('#last_name').val("");
+                $('#email').val("");
+                $('#address').val("");
+                $('#programs').val("").trigger('change');
+
+                setTimeout(() => {
+                    $('#success-message').fadeOut();
+                }, AppSession.successMessageDuration);
+            }
         },
         error: function (xhr, status, error) {
             // If there is an error, display the error message on the page

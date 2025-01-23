@@ -9,25 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --user-color: #9CC545; /* User-defined color */
-            --user-color-light: hsl(
-                calc(var(--user-hue, 75)),
-                calc(var(--user-saturation, 40%)),
-                calc(var(--user-lightness, 65%))
-            )
-        }
-
-        .bg-dark{
-            background-color: var(--user-color) !important;
-        }
-
-        .bg-light {
-            background-color: var(--user-color-light) !important;
-    }    
-    </style>
-    <link rel="stylesheet" href="{{ url_for('frontend.static', filename='style.css') }}">    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 </head>
 
 <body class="bg-light">
@@ -116,6 +98,12 @@
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script> <!-- QR code scanner library -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/2.2.1/i18n/it-IT.json"></script>
     <script src="{{ url_for('frontend.static', filename='app.js') }}"></script>
     <script src="{{ url_for('frontend.static', filename='new_customer.js') }}"></script>
     <script src="{{ url_for('frontend.static', filename='new_program.js') }}"></script>
@@ -123,10 +111,7 @@
     <script src="{{ url_for('frontend.static', filename='programs.js') }}"></script>
     <script src="{{ url_for('frontend.static', filename='scan.js') }}"></script>
     <script src="{{ url_for('frontend.static', filename='login.js') }}"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script> <!-- QR code scanner library -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="{{ url_for('frontend.static', filename='style.css') }}">    
 </body>
 
 </html>

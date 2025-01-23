@@ -93,14 +93,28 @@ function submit_new_or_modify_program() {
         url: AppSession.programBeingEdited ? `programs/edit/${AppSession.programBeingEdited}` : '/programs/add',
         contentType: 'application/json',  // Set content type to JSON
         data: JSON.stringify(formData),   // Send the form data as JSON
-        success: function (response) {   
-            //create a message to be shown by the programs page
-            sendMessageToProgramsPage(`Programma ${formData.name} ` + (AppSession.programBeingEdited ? 'modificato' : 'creato') + ' correttamente');
-
-            AppSession.programBeingEdited = null;
+        success: function (response) {           
             
-            // If the program is created/updated successfully, redirect to the program list or show a success message
-            navigateTo('programs');
+            // If the program is updated successfully, redirect to the customer list or show a success message
+            if(AppSession.programBeingEdited) {
+                AppSession.programBeingEdited = null;
+                sendMessageToProgramsPage(`Programma ${formData.name} modificato correttamente`);
+                navigateTo('programs');
+            }
+            else
+            {
+                $("#success-message").text(`Programma ${formData.name} creato correttamente`).show();
+                                   
+                $('#name').val("");
+                $('#valid_from').val("");
+                $('#valid_to').val("");
+                $('#threshold').val("");
+                $('#reward').val("");
+
+                setTimeout(() => {
+                    $('#success-message').fadeOut();
+                }, AppSession.successMessageDuration);
+            }
         },
         error: function (xhr, status, error) {
             // If there is an error, display the error message on the page

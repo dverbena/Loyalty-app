@@ -34,20 +34,62 @@ bp = Blueprint('customers', __name__, url_prefix='/customers')
 def list_customers(current_user):
     logger.info("Received request to list all customers.")
 
-    db = next(get_db())
-    customers = get_customers(db)
+    with next(get_db()) as db:
+        # Get DataTables parameters from the request
+        start = int(request.args.get('start', 0))
+        length = int(request.args.get('length', 10))
+        search_value = request.args.get('search[value]', '').lower()
+        order_column_index = int(request.args.get('order[0][column]', 0))
+        order_direction = request.args.get('order[0][dir]', 'asc')
+
+        # Define column mapping for ordering
+        column_mapping = {
+            1: 'name',
+            2: 'last_name',
+            3: 'email',
+            4: 'address'
+        }
+
+        order_column = column_mapping.get(order_column_index, 'name')
+
+        query_customers = get_customers(db)
+        
+        if search_value:
+            query_customers = query_customers.filter(
+                (Customer.name.ilike(f"%{search_value}%")) |
+                (Customer.last_name.ilike(f"%{search_value}%")) |
+                (Customer.email.ilike(f"%{search_value}%")) |
+                (Customer.address.ilike(f"%{search_value}%"))
+            )
+
+        total_records = db.query(Customer).count()
+
+        if order_direction == 'desc':
+            query_customers = query_customers.order_by(getattr(Customer, order_column).desc())
+        else:
+            query_customers = query_customers.order_by(getattr(Customer, order_column))
+        
+        customers = query_customers.offset(start).limit(length).all()
     
     logger.debug(f"Fetched {len(customers)} customers from the database.")
-
-    return jsonify([{
+    
+    # Build response
+    data = [{
         "id": customer.id,
         "name": customer.name,
         "last_name": customer.last_name,
         "email": customer.email,
         "address": customer.address,
         "qr_code": customer.qr_code,
-        "created_at": customer.created_at
-    } for customer in customers])
+        "created_at": customer.created_at.isoformat(),
+    } for customer in customers]
+
+    return jsonify({
+        "draw": int(request.args.get('draw', 1)),
+        "recordsTotal": total_records,
+        "recordsFiltered": total_records if not search_value else len(data),
+        "data": data
+    })
     
 @bp.route('/<int:id>', methods=['GET'])
 @token_required
@@ -129,7 +171,7 @@ def get_customers_by_name(current_user):
     #     return jsonify({"error": "At least one of 'name' or 'last_name' must be provided."}), 400
 
     if not query_params.name and not query_params.last_name:
-        return list_customers()
+        return list_customers(current_user)
     
     logger.debug(f"Searching for customers with name containing: {query_params.name}")
     

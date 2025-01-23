@@ -16,12 +16,42 @@ bp = Blueprint('programs', __name__, url_prefix='/programs')
 def list_programs(current_user):
     logger.info("Received request to list all programs.")
 
-    db = next(get_db())
-    programs = get_programs(db)
-    
+    with next(get_db()) as db:
+        # Get DataTables parameters from the request
+        start = int(request.args.get('start', 0))
+        length = int(request.args.get('length', 10))
+        search_value = request.args.get('search[value]', '').lower()
+        order_column_index = int(request.args.get('order[0][column]', 0))
+        order_direction = request.args.get('order[0][dir]', 'asc')
+
+        # Define column mapping for ordering
+        column_mapping = {
+            1: 'name',
+            2: 'valid_from',
+            3: 'valid_to'
+        }
+
+        order_column = column_mapping.get(order_column_index, 'name')
+
+        query_programs = get_programs(db)
+        
+        if search_value:
+            query_programs = query_programs.filter(
+                (Program.name.ilike(f"%{search_value}%"))
+            )
+
+        total_records = db.query(Program).count()
+
+        if order_direction == 'desc':
+            query_programs = query_programs.order_by(getattr(Program, order_column).desc())
+        else:
+            query_programs = query_programs.order_by(getattr(Program, order_column))
+        
+        programs = query_programs.offset(start).limit(length).all()
+        
     logger.debug(f"Fetched {len(programs)} programs from the database.")
 
-    return jsonify([{
+    data = [{
         "id": program.id,
         "name": program.name,
         "valid_from": program.valid_from,
@@ -29,7 +59,14 @@ def list_programs(current_user):
         "num_access_to_trigger": program.num_access_to_trigger,
         "num_accesses_reward": program.num_accesses_reward,
         "created_at": program.created_at
-    } for program in programs])
+    } for program in programs]
+
+    return jsonify({
+        "draw": int(request.args.get('draw', 1)),
+        "recordsTotal": total_records,
+        "recordsFiltered": total_records if not search_value else len(data),
+        "data": data
+    })
 
 @bp.route("/current", methods=["GET"])
 @token_required

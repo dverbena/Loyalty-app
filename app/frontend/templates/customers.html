@@ -3,28 +3,18 @@
 <div id="reward" class="alert alert-success mt-3" style="display: none;"><h1>Ingresso gratuito!</h1></div>
 
 <div id="divCustomers" class="container-fluid mt-4">
-
-    <!-- Filter Form -->
-    <form id="filterForm" class="mb-4">
-        <div class="container-fluid p-4 row border rounded shadow-sm table-responsive row bg-dark">
-            <div class="col-md-4" style="margin-bottom: 5px">
-                <input id="filterName" type="text" name="name" class="form-control" placeholder="Filtra per nome">
-            </div>
-            <div class="col-md-4" style="margin-bottom: 5px">
-                <input id="filterLastName" type="text" name="last_name" class="form-control" placeholder="Filtra per cognome">
-            </div>
-            <div class="col-md-4">
-                <input type="submit" id="submitBtn" value="Filtra" class="btn btn-primary mb-2 mb-sm-0">
-            </div>
-        </div>
-    </form>
-
+    <div class="d-flex justify-content-end m-2" style="margin-right: 10px;">
+        <button class="btn btn-primary" onclick="navigateTo('new_customer')">
+            <i class="fas fa-plus" style="margin-right: 5px;"></i>Nuovo socio
+        </button>
+    </div>
+    
     <!-- Customers Table -->
     <div class="table-responsive container-fluid p-4 row border rounded shadow-sm table-responsive bg-dark">
-        <table id="customers_table" class="table table-bordered my-table" style="width: 100%;">
+        <table id="customers_table" class="pt-2 table table-bordered my-table" style="width: 100%;">
             <thead>
                 <tr>
-                    <th style="width: 1%; white-space: nowrap;"></th>
+                    <th style="white-space: nowrap;"></th>
                     <th>Nome</th>
                     <th>Cognome</th>
                     <th>Email</th>

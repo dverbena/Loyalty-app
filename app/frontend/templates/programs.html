@@ -2,15 +2,18 @@
 <div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
 
 <div id="divPrograms" class="container-fluid mt-4">
-
-    <!-- Filter Form -->
+    <div class="d-flex justify-content-end m-2" style="margin-right: 10px;">
+        <button class="btn btn-primary" onclick="navigateTo('new_program')">
+            <i class="fas fa-plus" style="margin-right: 5px;"></i>Nuovo programma
+        </button>
+    </div>
 
     <!-- Programs Table -->
     <div class="container-fluid p-4 row border rounded shadow-sm table-responsive bg-dark table-responsive">
-        <table id="programs_table" class="table table-bordered my-table" style="width: 100%;">
+        <table id="programs_table" class="pt-2 table table-bordered my-table" style="width: 100%;">
             <thead>
                 <tr>
-                    <th scope="col" style="width: 1%; white-space: nowrap;"></th>
+                    <th scope="col" style="white-space: nowrap;"></th>
                     <th scope="col">Nome</th>
                     <th scope="col">Valido dal</th>
                     <th scope="col">Valido fino al</th>

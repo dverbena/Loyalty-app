@@ -87,7 +87,7 @@ def create_customer(db: Session, name: str, last_name: str, email: str, address:
 
 def get_customers(db: Session, skip: int = 0, limit: int = 10):
     with db:
-        customers = db.query(Customer).offset(skip).limit(limit).all()
+        customers = db.query(Customer) #.offset(skip).limit(limit).all()
     
     return customers
 
@@ -128,7 +128,7 @@ def get_access_logs_without_imported(db: Session, customer_id: int = None):
 
 def get_programs(db: Session, skip: int = 0, limit: int = 10):
     with db:
-        programs = db.query(Program).offset(skip).limit(limit).all()
+        programs = db.query(Program).order_by(Program.valid_to.desc()) #.offset(skip).limit(limit).all()
     
     return programs
 
@@ -140,7 +140,7 @@ def get_current_programs(db: Session, skip: int = 0, limit: int = 10):
             and_(
                 Program.valid_from <= now,
                 Program.valid_to > now
-            )).all()
+            )).order_by(Program.valid_to.desc()).all()
     
     return programs
 

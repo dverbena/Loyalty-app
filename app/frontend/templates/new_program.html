@@ -1,5 +1,6 @@
 <!-- Error Message Display -->
 <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+<div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
 
 <div class="container-fluid mt-4">
 
@@ -32,19 +33,16 @@
                 </div>
 
                 <div id="buttonsCreate">
-                    <div class="form-group text-center">
-                        <input type="submit" id="submitBtn" value="Crea nuovo programma"
-                            class="btn btn-primary btn-lg w-100">
+                    <div class="form-group text-center d-flex justify-content-between">   
+                        <input type="button" id="backToPrograms" value="Lista" onclick="navigateTo('programs');" class="btn btn-lg w-50 me-2">
+                        <input type="submit" id="submitBtn" value="Crea nuovo programma" class="btn btn-primary btn-lg w-50 ms-2">
                     </div>
                 </div>
 
                 <div id="buttonsEdit">
                     <div class="form-group text-center d-flex justify-content-between">
-                        <input type="button" id="programCancel" value="Annulla"
-                            onclick="AppSession.programBeingEdited = null; navigateTo('programs');"
-                            class="btn btn-lg w-50 me-2">
-                        <input type="submit" id="submitEditBtn" value="Aggiorna programma"
-                            class="btn btn-primary btn-lg w-50 ms-2">
+                        <input type="button" id="programCancel" value="Lista" onclick="AppSession.programBeingEdited = null; navigateTo('programs');" class="btn btn-lg w-50 me-2">
+                        <input type="submit" id="submitEditBtn" value="Aggiorna programma" class="btn btn-primary btn-lg w-50 ms-2">
                     </div>
                 </div>
             </div>

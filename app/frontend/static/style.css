@@ -1,34 +1,78 @@
+:root {
+    --user-color: #9CC545; /* User-defined color */
+    --user-color-light: hsl(
+        calc(var(--user-hue, 75)),
+        calc(var(--user-saturation, 40%)),
+        calc(var(--user-lightness, 65%)));
+    --user-color-dark: #454545;
+    --user-body-color: #454545;
+    --user-disabled-color: #7d7d7d;
+    --user-color-whitish: #e6e6e6;
+}  
+
+/*-webkit-text-stroke: 1px black; /* Border size and color */
+
 body {
     margin: 0;
     padding: 0;
     font-family: 'Trebuchet MS', Helvetica, sans-serif;
-    color: #fefefe;
+    color: var(--user-body-color) !important;
 }
+
+.bg-dark{
+    background-color: var(--user-color) !important;
+}
+
+.bg-light {
+    background-color: var(--user-color-light) !important;
+}  
 
 .navbar-brand {
     font-size: 15px;
     font-weight: bold;
 }
 
-.select2-dropdown li {
-    color: #454545;
+.select2-container--default .select2-selection--multiple {
+    background-color: var(--user-color-whitish);
+}
+
+.select2-container--open .select2-dropdown--below {
+    background-color: var(--user-color-whitish);
+    color: var(--user-color-dark);
 }
 
 .my-table thead {
-    background-color: var(--user-color-light);
-    color: #454545;
+    background-color: var(--user-color-whitish);
+    color: var(--user-color-dark);
 }
 
 .my-table tbody tr:nth-child(odd) {
-    background-color: transparent; 
-    color: #fefefe;
+    background-color: var(--user-color-light); 
+    color: var(--user-color-dark);
 }
 
 .my-table tbody tr:nth-child(even) {
-    background-color: var(--user-color-light);
-    color: #454545;
+    background-color: transparent;
+    color: var(--user-color-dark);
 }
 
+.dataTables_filter input,
+.dataTables_length select {
+    background-color: var(--user-color-whitish) !important;
+    color: var(--user-color-dark) !important;
+}
+
+.dataTables_paginate a {
+    color: var(--user-color-dark) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+    color: var(--user-disabled-color) !important;
+}
+
+.form-control {
+    background-color: var(--user-color-whitish) !important;
+}
 /*
 #main-content {
     padding: 20px;
@@ -51,7 +95,7 @@ body {
 
 /* Change link color */
 .nav-link {
-    color: #ffffff !important; /* Replace with your desired link color */
+    color: var(--user-body-color) !important; /* Replace with your desired link color */
 }
 
 /* Change link hover color */
@@ -62,12 +106,12 @@ body {
 /* Style for active links */
 .nav-link.active {
     background-color: #444444 !important;
-    color: #ffffff !important; /* Adjust as needed */
+    color: var(--user-body-color) !important; /* Adjust as needed */
 }
 
 /* Style for disabled links */
 .nav-link.disabled {
-    color: #7d7d7d !important;
+    color: var(--user-disabled-color) !important;
 }
 
 .required {

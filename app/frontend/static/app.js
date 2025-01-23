@@ -66,12 +66,13 @@ const navigateTo = (page) => {
             stopScanning().finally(() => {
                 // Trigger page-specific logic
                 if (page === 'customers') {
-                    $('#filterForm').on('submit', function(event) {
-                        event.preventDefault();
-                        filterCustomers(event);
-                    });
+                    // $('#filterForm').on('submit', function(event) {
+                    //     event.preventDefault();
+                    //     //filterCustomers(event);
+                    // });
                     
-                    filterCustomers();
+                    //filterCustomers();
+                    loadCustomers();
                     startMessagesTimer();
                     startRewardBannerTimer();
                 } else {
@@ -79,7 +80,7 @@ const navigateTo = (page) => {
                     stopRewardBannerTimer();
     
                     if (page === 'programs') {
-                        filterPrograms();
+                        loadPrograms();
                         startMessagesTimerProgram();
                     } else {
                         stopMessagesTimerProgram();

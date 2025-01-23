@@ -1,3 +1,5 @@
+var customersTable;
+
 const sendMessageToCustomersPage = (message) => {
     AppSession.messageToCustomerPage = { msg: message, type: 'info' };
 }
@@ -129,7 +131,8 @@ function handleAction(action, id, name, last_name) {
                         sendMessageToCustomersPage(`Socio ${response.customer.name} ${response.customer.last_name} eliminato correttamente!`);
                         
                         // remove the deleted customer's row from the table
-                        $(`tr[data-id="${id}"]`).remove();
+                        // Reload the table but keep the current page
+                        customersTable.ajax.reload(null, false); // 'false' prevents resetting the pagination
                     },
                     error: function (xhr, status, error) {
                         sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : ""))
@@ -172,57 +175,122 @@ function handleAction(action, id, name, last_name) {
     }
 }
 
-function filterCustomers(event) {
-    var formData = {
-        name: $('#filterName').val(),
-        last_name: $('#filterLastName').val()
-    };
+// function filterCustomers(event) {
+//     var formData = {
+//         name: $('#filterName').val(),
+//         last_name: $('#filterLastName').val()
+//     };
 
-    $.ajax({
-        type: 'GET',
-        url: `customers/search?name=${formData.name}&last_name=${formData.last_name}`,
-        headers: { 'Authorization': localStorage.getItem('token') },
-        success: function (response) {  
-            $('#customers_table tbody').empty(); // remove all rows
+//     $.ajax({
+//         type: 'GET',
+//         url: `customers/search?name=${formData.name}&last_name=${formData.last_name}`,
+//         headers: { 'Authorization': localStorage.getItem('token') },
+//         success: function (response) {  
+//             $('#customers_table tbody').empty(); // remove all rows
             
-            if (response && response.length > 0) {
-                // Populate the table with access times
-                response.forEach(function(customer) {
-                    $('#customers_table tbody').append(`
-                        <tr class="selectable-row" data-id="${customer.id}">
-                            <td style="white-space: nowrap;">
-                                <!-- Action buttons with Font Awesome icons -->
-                                <button title="Check in" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("check_in", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
-                                    <i class="fas fa-check"></i> <!-- Edit icon -->
+//             if (response && response.length > 0) {
+//                 // Populate the table with access times
+//                 response.forEach(function(customer) {
+//                     $('#customers_table tbody').append(`
+//                         <tr class="selectable-row" data-id="${customer.id}">
+//                             <td style="white-space: nowrap;">
+//                                 <!-- Action buttons with Font Awesome icons -->
+//                                 <button title="Check in" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("check_in", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
+//                                     <i class="fas fa-check"></i> <!-- Edit icon -->
+//                                 </button>
+//                                 <button title="Rimanda QR code" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("resend_qr", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
+//                                     <i class="fas fa-at"></i> <!-- View icon -->
+//                                 </button>
+//                                 <button title="Mostra ingressi" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("access_logs", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
+//                                     <i class="fas fa-history"></i>
+//                                 </button>
+//                                 <button title="Modifica" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("update", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
+//                                     <i class="fas fa-edit"></i>
+//                                 </button>
+//                                 <button title="Elimina" class="btn btn-danger mb-2 mb-sm-0" onclick='handleAction("delete", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
+//                                     <i class="fas fa-trash"></i> <!-- Delete icon -->
+//                                 </button>
+//                             </td>
+//                             <td>${customer.name}</td>
+//                             <td>${customer.last_name}</td>
+//                             <td>${customer.email}</td>
+//                             <td>${customer.address}</td>
+//                         </tr>`);
+//                 });
+//             } else {
+//                 // If no data, display a message
+//                 $('#customers_table tbody').append('<tr><td colspan="5" class="text-center">Nessun socio trovato</td></tr>');
+//             }
+//         },
+//         error: function (xhr, status, error) {
+//             // If there is an error, display the error message on the page
+//             errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");            
+//             sendErrorMessageToCustomersPage(errorMessage);
+//         }
+//     });
+// }
+
+function loadCustomers() {
+    customersTable = $('#customers_table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            url: '/customers/all',
+            headers: { 'Authorization': localStorage.getItem('token') },
+            dataSrc: 'data' // Key in the response containing the data array
+        },
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.2.1/i18n/it-IT.json',
+        },
+        columns: [
+            { 
+                data: 'id', 
+                render: function(data, type, row, meta) {
+                    return `
+                    <div class="container">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-6 col-xl-2">
+                                <button title="Check in" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("check_in", ${row.id}, ${JSON.stringify(row.name)}, ${JSON.stringify(row.last_name)})'>
+                                    <i class="fas fa-check"></i> <!-- Check in icon -->
                                 </button>
-                                <button title="Rimanda QR code" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("resend_qr", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
-                                    <i class="fas fa-at"></i> <!-- View icon -->
+                            </div>
+                            <div class="col-12 col-lg-6 col-xl-2">
+                                <button title="Rimanda QR code" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("resend_qr", ${row.id}, ${JSON.stringify(row.name)}, ${JSON.stringify(row.last_name)})'>
+                                    <i class="fas fa-at"></i> <!-- Resend QR code icon -->
                                 </button>
-                                <button title="Mostra ingressi" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("access_logs", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
-                                    <i class="fas fa-history"></i>
+                            </div>
+                            <div class="col-12 col-lg-6 col-xl-2">
+                                <button title="Mostra ingressi" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("access_logs", ${row.id}, ${JSON.stringify(row.name)}, ${JSON.stringify(row.last_name)})'>
+                                    <i class="fas fa-history"></i> <!-- Access logs icon -->
                                 </button>
-                                <button title="Modifica" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("update", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
-                                    <i class="fas fa-edit"></i>
+                            </div>
+                            <div class="col-12 col-lg-6 col-xl-2">
+                                <button title="Modifica" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("update", ${row.id}, ${JSON.stringify(row.name)}, ${JSON.stringify(row.last_name)})'>
+                                    <i class="fas fa-edit"></i> <!-- Edit icon -->
                                 </button>
-                                <button title="Elimina" class="btn btn-danger mb-2 mb-sm-0" onclick='handleAction("delete", ${customer.id}, "${customer.name}", "${customer.last_name}")'>
+                            </div>
+                            <div class="col-12 col-lg-12 col-xl-4 d-xl-flex justify-content-center">
+                                <button title="Elimina" class="btn btn-danger mb-2 mb-sm-0" onclick='handleAction("delete", ${row.id}, ${JSON.stringify(row.name)}, ${JSON.stringify(row.last_name)})'>
                                     <i class="fas fa-trash"></i> <!-- Delete icon -->
                                 </button>
-                            </td>
-                            <td>${customer.name}</td>
-                            <td>${customer.last_name}</td>
-                            <td>${customer.email}</td>
-                            <td>${customer.address}</td>
-                        </tr>`);
-                });
-            } else {
-                // If no data, display a message
-                $('#customers_table tbody').append('<tr><td colspan="5" class="text-center">Nessun socio trovato</td></tr>');
-            }
-        },
-        error: function (xhr, status, error) {
-            // If there is an error, display the error message on the page
-            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");            
-            sendErrorMessageToCustomersPage(errorMessage);
-        }
+                            </div>
+                        </div>
+                    </div>`;
+                },
+                orderable: false // Disable sorting for the first column
+            },
+            { data: 'name' },
+            { data: 'last_name' },
+            { data: 'email' },
+            { data: 'address' },
+            //{ data: 'qr_code' },
+            //{ data: 'created_at' }
+        ],
+        lengthMenu: [
+            [5, 10, 25, 50, 100],
+            [5, 10, 25, 50, 100]
+        ],
+        pageLength: 10,
+        order: [[1, 'asc']] // Default ordering
     });
 }

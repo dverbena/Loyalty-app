@@ -1,4 +1,5 @@
 <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+<div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
 
 <div class="container-fluid mt-4">
     <!-- Error Message Display -->
@@ -38,14 +39,15 @@
                 </div>
                 
                 <div id="buttonsCreate">
-                    <div class="form-group text-center">
-                        <input type="submit" id="submitBtn" value="Crea nuovo socio" class="btn btn-primary btn-lg w-100">
+                    <div class="form-group text-center d-flex justify-content-between">   
+                        <input type="button" id="backToCustomers" value="Lista" onclick="navigateTo('customers');" class="btn btn-lg w-50 me-2">
+                        <input type="submit" id="submitBtn" value="Crea nuovo socio" class="btn btn-primary btn-lg w-50 ms-2">
                     </div>
                 </div>
 
                 <div id="buttonsEdit">
-                    <div class="form-group text-center d-flex justify-content-between">
-                        <input type="button" id="customerCancel" value="Annulla" onclick="AppSession.customerBeingEdited = null; navigateTo('customers');" class="btn btn-lg w-50 me-2">
+                    <div class="form-group text-center d-flex justify-content-between">                        
+                        <input type="button" id="customerCancel" value="Lista" onclick="AppSession.customerBeingEdited = null; navigateTo('customers');" class="btn btn-lg w-50 ms-2">
                         <input type="submit" id="submitEditBtn" value="Aggiorna socio" class="btn btn-primary btn-lg w-50 ms-2">
                     </div>         
                 </div>       
