@@ -130,7 +130,7 @@ function loadPrograms() {
                 data: 'id', 
                 render: function(data, type, row, meta) {
                     return `
-                    <div class="container">
+                    <div>
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
                                 <button title="Modifica" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleActionProgram("update", ${row.id}, ${JSON.stringify(row.name)})'>

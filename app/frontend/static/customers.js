@@ -234,6 +234,7 @@ function loadCustomers() {
     customersTable = $('#customers_table').DataTable({
         processing: true,
         serverSide: true,
+        autoWidth: false,
         ajax: {
             url: '/customers/all',
             headers: { 'Authorization': localStorage.getItem('token') },
@@ -247,7 +248,7 @@ function loadCustomers() {
                 data: 'id', 
                 render: function(data, type, row, meta) {
                     return `
-                    <div class="container">
+                    <div>
                         <div class="row g-3">
                             <div class="col-12 col-lg-6 col-xl-2">
                                 <button title="Check in" style="margin-right: 10px" class="btn btn-info mb-2 mb-sm-0" onclick='handleAction("check_in", ${row.id}, ${JSON.stringify(row.name)}, ${JSON.stringify(row.last_name)})'>
@@ -279,10 +280,10 @@ function loadCustomers() {
                 },
                 orderable: false // Disable sorting for the first column
             },
-            { data: 'name' },
-            { data: 'last_name' },
-            { data: 'email' },
-            { data: 'address' },
+            { data: 'name', width: '25%' },
+            { data: 'last_name', width: '25%' },
+            { data: 'email', width: '20%' },
+            { data: 'address', width: '30%' },
             //{ data: 'qr_code' },
             //{ data: 'created_at' }
         ],

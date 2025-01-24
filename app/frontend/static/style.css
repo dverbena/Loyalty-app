@@ -46,15 +46,50 @@ body {
     color: var(--user-color-dark);
 }
 
+.my-table tbody tr:nth-child(even), /*{
+    background-color: transparent;
+    color: var(--user-color-dark);
+}*/
+
 .my-table tbody tr:nth-child(odd) {
     background-color: var(--user-color-light); 
     color: var(--user-color-dark);
 }
 
-.my-table tbody tr:nth-child(even) {
-    background-color: transparent;
-    color: var(--user-color-dark);
+.my-table td {
+    border-bottom: solid 1px var(--user-color-whitish);
 }
+
+.action-col-customers {
+    min-width: 60px; 
+    max-width: 60px; 
+}
+
+@media (min-width: 992px) {     
+    .action-col-customers {
+        min-width: 120px; 
+        max-width: 120px; 
+    }
+} 
+
+@media (min-width: 1200px) {     
+    .action-col-customers {
+        min-width: 300px; 
+        max-width: 300px; 
+    }
+}
+
+.action-col-programs {
+    min-width: 60px; 
+    max-width: 60px; 
+}
+
+@media (min-width: 768px) {     
+    .action-col-programs {
+        min-width: 120px; 
+        max-width: 120px; 
+    }
+} 
 
 .dataTables_filter input,
 .dataTables_length select {
