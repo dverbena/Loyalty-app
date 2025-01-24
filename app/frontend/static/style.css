@@ -4,8 +4,8 @@
         calc(var(--user-hue, 75)),
         calc(var(--user-saturation, 40%)),
         calc(var(--user-lightness, 65%)));
-    --user-color-dark: #454545;
-    --user-body-color: #454545;
+    --user-color-dark: #212529;
+    --user-body-color: #212529;
     --user-disabled-color: #7d7d7d;
     --user-color-whitish: #e6e6e6;
 }  
