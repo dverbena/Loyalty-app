@@ -43,19 +43,19 @@ def new_customer(current_user):
     #     else:
     #         return jsonify({'message': 'Error creating customer. Please try again.'}), 500
 
-    return render_template('new_customer.html', theme_color=theme_color)
+    return render_template('new_customer.html')
 
 # Customers search handler
 @bp.route('/customers')
 @token_required
 def customers(current_user):        
-    return render_template('customers.html', theme_color=theme_color)
+    return render_template('customers.html')
 
 # Programs search handler
 @bp.route('/programs')
 @token_required
 def programs(current_user):
-    return render_template('programs.html', theme_color=theme_color)
+    return render_template('programs.html')
 
 @bp.route('/scan')
 @token_required
@@ -65,7 +65,7 @@ def scan(current_user):
 @bp.route('/new_program')
 @token_required
 def new_program(current_user):
-    return render_template('new_program.html', theme_color=theme_color)
+    return render_template('new_program.html')
 
 @bp.route('/login')
 def login():

@@ -7,6 +7,20 @@ import logging
 import os
 from app.models import User
 from werkzeug.security import generate_password_hash
+import colorsys
+
+def lighten_color(hex_color, percentage):
+    """Lighten a HEX color by a percentage."""
+    # Convert hex to RGB
+    rgb = tuple(int(hex_color.lstrip('#')[i:i+2], 16) for i in (0, 2, 4))
+    h, l, s = colorsys.rgb_to_hls(*[x / 255.0 for x in rgb])
+    
+    # Increase the lightness by the given percentage
+    l = min(1, l + percentage / 100.0)
+    
+    # Convert back to RGB
+    r, g, b = colorsys.hls_to_rgb(h, l, s)
+    return '#{:02x}{:02x}{:02x}'.format(int(r * 255), int(g * 255), int(b * 255))
 
 def format_db_date(value: str, date_format: str = '%d/%m/%Y'):
     # Convert string to datetime object and return the formatted date
@@ -68,5 +82,6 @@ def create_app():
     app.config['DEBUG'] = True
     
     app.jinja_env.filters['format_date'] = format_db_date
+    app.jinja_env.filters['lighten'] = lighten_color
 
     return app

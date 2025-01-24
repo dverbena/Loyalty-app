@@ -10,6 +10,16 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        :root {
+            --user-color: {{ theme_color }}; /* User-defined color */
+            --user-color-light: {{ theme_color | lighten(30)}}; /* User-defined color lightened */
+            --user-color-dark: #212529;
+            --user-body-color: #212529;
+            --user-disabled-color: #7d7d7d;
+            --user-color-whitish: #e6e6e6;
+        }  
+    </style>
 </head>
 
 <body class="bg-light">
