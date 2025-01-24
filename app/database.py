@@ -2,8 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
 import logging
-import weakref
-import traceback
+import os
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 # Define the Base class
 Base = declarative_base()
 
-DATABASE_URL = "postgresql://admin:admin_password@db:5432/loyaltydb"
+DATABASE_URL = f'postgresql://{os.getenv("DB_USER", "admin")}:{os.getenv("DB_PASS", "admin_password")}@{os.getenv("DB_HOST", "localhost")}:{os.getenv("DB_PORT", "5432")}/{os.getenv("DB_NAME", "loyaltydb")}'
 
 engine = create_engine(
     DATABASE_URL,
