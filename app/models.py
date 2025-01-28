@@ -97,10 +97,26 @@ class User(Base):
     username = Column(String(80), unique=True, nullable=False)
     password = Column(String(200), nullable=False)
     created_at = Column(DateTime, server_default='CURRENT_TIMESTAMP')
+    email = Column(String(255), nullable=True)
+    validated = Column(Boolean, nullable=True)
     
-    def __init__(self, username, password):
+    def validate_postgres_boolean(self, value):
+        true_values = {'t', 'true', 'y', 'yes', '1', True, 1}
+        
+        # Normalize strings to lowercase
+        if isinstance(value, str):
+            value = value.strip().lower()
+        
+        if value in true_values:
+            return True
+        else:
+            return False
+    
+    def __init__(self, username, password, email, validated):
         self.username = username
         self.password = password
+        self.email = email
+        self.validated = self.validate_postgres_boolean(validated)
 
 # Define Pydantic models for request data validation
 class IDQuery(BaseModel):
@@ -140,3 +156,9 @@ class UserRequest(BaseModel):
 
 class PasswordRequest(BaseModel):    
     password: str = Field(..., description="User password", min_length=8)
+
+class EmailRequest(BaseModel):    
+    email: str = Field(..., description="User email", min_length=5)
+
+class OTPRequest(BaseModel):    
+    otp: str = Field(..., description="User email", min_length=6, max_length=6)

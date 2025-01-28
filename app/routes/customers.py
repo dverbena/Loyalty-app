@@ -15,6 +15,7 @@ from app.crud import *
 from app.models import *
 from app.utils import generate_qr_code
 from app.utils import token_required
+from app.utils import parse_int_with_default
 
 # Initialize logger
 logger = logging.getLogger(__name__)
@@ -302,31 +303,31 @@ def send_email_with_attachment_and_inline_image(to_email, attachment):
         inline_image_path (str): Path to the image to include inline.
     """
     smtp_server = os.getenv("SMTP_SERVER")
-    smtp_port = int(os.getenv("SMTP_PORT", 587))
+    smtp_port = parse_int_with_default(os.getenv("SMTP_PORT", 587), 587)
     smtp_user = os.getenv("SMTP_USER")
     smtp_password = os.getenv("SMTP_PASSWORD")
-    sender_email = os.getenv("", smtp_user)
+    sender_email = os.getenv("SMTP_SENDER_EMAIL", smtp_user)
 
     if not all([smtp_server, smtp_port, smtp_user, smtp_password, sender_email]):
-        raise ValueError("Missing SMTP configuration in the environment variables.")
+        raise ValueError("Configurazione SMTP mancante o errata")
 
     # Construct the email
     message = MIMEMultipart("related")
     message["From"] = sender_email
     message["To"] = to_email
-    message["Subject"] = "Il tuo codice MTTF"
+    message["Subject"] = "Il tuo codice socio"
 
     # Add the HTML body
     msg_alternative = MIMEMultipart("alternative")
     message.attach(msg_alternative)
 
     # Embed the inline image using CID
-    cid = "mttf-logo"
+    cid = "logo"
     html_body = f"""
     <div style="text-align: center;">
-        <img src="cid:{cid}" alt="MTTF Logo" width="398" height="398">
+        <img src="cid:{cid}" alt="Logo" width="398" height="398">
         <div style="font-size: 24px; font-family: 'Google Sans', Roboto, Arial, sans-serif; line-height: 32px; margin-top: 24px;">
-            In allegato il codice da presentare per accumulare punti premio presso MTTF.<br>
+            In allegato il codice da presentare per accumulare punti premio.<br>
             Puoi conservare questa email o salvare l'immagine sul tuo dispositivo.
         </div>
     </div>
@@ -337,7 +338,7 @@ def send_email_with_attachment_and_inline_image(to_email, attachment):
     with open("/app/frontend/static/logo/logo.png", "rb") as img:
         img_part = MIMEImage(img.read())
         img_part.add_header("Content-ID", f"<{cid}>")
-        img_part.add_header("Content-Disposition", "inline", filename="mttf-logo.png")
+        img_part.add_header("Content-Disposition", "inline", filename="logo.png")
         message.attach(img_part)
 
     # Attach the QR code file

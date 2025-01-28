@@ -32,13 +32,12 @@ function initNewCustomer() {
             $('#buttonsEdit').hide(); 
         }
         
-        $("input[required], select[required]").each(function () {
-            const label = $(this).closest(".form-group").find("label");
-            if (label.find(".required").length === 0) {
-                label.append('<span class="required"> *</span>');
-            }
-        });
-        
+        // $("input[required], select[required]").each(function () {
+        //     const label = $(this).closest(".form-group").find("label");
+        //     if (label.find(".required").length === 0) {
+        //         label.append('<span class="required"> *</span>');
+        //     }
+        // });        
     });
 }
 

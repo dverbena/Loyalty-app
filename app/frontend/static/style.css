@@ -29,6 +29,10 @@ body {
     color: var(--user-color-dark);
 }
 
+.my-table {
+    border-collapse: collapse !important;
+}
+
 .my-table thead {
     background-color: var(--user-color-whitish);
     color: var(--user-color-dark);
@@ -44,8 +48,9 @@ body {
     color: var(--user-color-dark);
 }
 
-.my-table td {
-    border-bottom: solid 1px var(--user-color-whitish);
+.my-table td, th {
+    border-top: solid 1px var(--user-color-dark);
+    border-right: solid 1px var(--user-color-dark);    
 }
 
 .action-col-customers {

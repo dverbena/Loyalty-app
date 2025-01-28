@@ -1,20 +1,22 @@
 services:
   loyalty-db:
-    image: postgres:15
-    container_name: loyalty_db
+    image: "postgres:15"
+    container_name: "loyalty-db"
     hostname: "loyalty-db"
     restart: "unless-stopped"
     ports:
       - "5432:5432"
     env_file:
-      - .env
+      - ".env"
+    networks:
+      - "loyalty-app"
     volumes:
-      - loyalty_db_data:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - "loyalty_db_data:/var/lib/postgresql/data"
+      - "./db/init.sql:/docker-entrypoint-initdb.d/init.sql"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 30s
-      timeout: 10s
+      interval: "30s"
+      timeout: "10s"
       retries: 3
     logging:
       driver: "json-file"
@@ -22,18 +24,22 @@ services:
         max-size: "10m"
         max-file: "3"
 
-loyalty-app:
-    build: .
+  loyalty-app:
+    build:
+      context: .
+    image: loyalty-app:latest
     container_name: "loyalty-app"
     hostname: "loyalty-app"
     restart: "unless-stopped"
     ports:
       - "5000:5000"
     depends_on:
-      db:
-        condition: service_healthy
+      loyalty-db:
+        condition: "service_healthy"
     env_file:
-      - .env  # Load environment variables from the .env file
+      - ".env"  # Load environment variables from the .env file
+    networks:
+      - "loyalty-app"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://loyalty-app:5000"]
       interval: 30s
@@ -78,3 +84,7 @@ loyalty-app:
 volumes:
   loyalty_db_data:
     name: "loyalty_db_data"
+
+networks:
+  loyalty-app:
+    driver: "bridge"

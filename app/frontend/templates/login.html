@@ -24,5 +24,22 @@
     <input id="new_password_confirm" type="password" name="new_password_confirm" class="form-control" placeholder="Conferma la nuova password" required>
   </div>
 
+  <div class="mb-3">
+    <input id="new_email" type="email" name="new_email" class="form-control" placeholder="Indirizzo email" required>
+  </div>
+
   <button type="submit" class="btn btn-primary w-100">Cambia password</button>
+</form>
+<form id="confirmUserForm" class="container mt-5 p-4 border rounded shadow-sm bg-dark" style="max-width: 400px; display: none">
+  <h2 class="text-center mb-4">Conferma utenza</h2>
+
+  <div class="mb-3">
+    <input id="confirm_otp" type="text" name="confirm_otp" class="form-control" placeholder="Inserisci il codice OTP ricevuto via email" required>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100">Conferma</button>
+
+  <div class="text-center mt-3">
+    <a href="#" onclick="return send_validation_email();">Invia nuovamente codice OTP</a>
+  </div>
 </form>

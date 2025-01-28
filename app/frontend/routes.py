@@ -41,7 +41,7 @@ def new_customer(current_user):
     #     if response.status_code == 201:
     #         return jsonify({'message': 'Customer created successfully!'}), 200
     #     else:
-    #         return jsonify({'message': 'Error creating customer. Please try again.'}), 500
+    #         return jsonify({'error': 'Error creating customer. Please try again.'}), 500
 
     return render_template('new_customer.html')
 

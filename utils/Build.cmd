@@ -1,2 +1,2 @@
-docker compose down app
-docker compose up app --build -d
+docker compose down loyalty-app
+docker compose up loyalty-app --build -d

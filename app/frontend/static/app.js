@@ -115,6 +115,11 @@ const navigateTo = (page) => {
                                             event.preventDefault();
                                             validateAndSubmitChangePassword(event);
                                         });
+                                        
+                                        $('#confirmUserForm').on('submit', function(event) {
+                                            event.preventDefault();
+                                            validateAndSubmitConfirmUser(event);
+                                        });
                                     }
                                 }
                             }
@@ -131,6 +136,16 @@ const navigateTo = (page) => {
                 console.error("Navigation error:", error);
                 contentDiv.innerHTML = `<h1 class="alert alert-danger mt-3">Errore: ${(xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : error)} </h1>`;
             }
+        },
+        complete: function() {                
+            $(document).ready(function() {        
+                $("input[required], select[required]").each(function () {
+                    const label = $(this).closest(".form-group").find("label");
+                    if (label.find(".required").length === 0) {
+                        label.append('<span class="required"> *</span>');
+                    }
+                });        
+            });
         }
     });
     

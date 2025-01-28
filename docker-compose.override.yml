@@ -1,5 +1,5 @@
 services:
-  app:
+  loyalty-app:
     volumes:
       - ./app:/usr/src/app
     environment:

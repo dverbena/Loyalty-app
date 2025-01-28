@@ -63,8 +63,8 @@ def create_app():
 
         if admin_user is None:
             # If no admin user exists, create one
-            hashed_password = generate_password_hash("changeme")
-            admin_user = User(username="admin", password=hashed_password)
+            hashed_password = generate_password_hash(os.getenv("DEFAULT_PASSWORD", "changeme"))
+            admin_user = User(username="admin", password=hashed_password, email=None, validated=False)
 
             db.add(admin_user)
             db.commit()
