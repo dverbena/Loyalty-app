@@ -29,10 +29,6 @@ body {
     color: var(--user-color-dark);
 }
 
-.my-table {
-    border-collapse: collapse !important;
-}
-
 .my-table thead {
     background-color: var(--user-color-whitish);
     color: var(--user-color-dark);
