@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="icon" type="image/png" href="{{ url_for('frontend.static', filename='logo/logo.png') }}">
     <style>
         :root {
             --user-color: {{ theme_color }}; /* User-defined color */
@@ -26,7 +27,7 @@
     <!-- Sidebar Navigation -->
     <div class="container-fluid">
         <div class="row flex-nowrap">
-            <div id="sidebar" class="col-auto col-10 col-sm-5 col-md-4 col-lg-3 px-0 bg-dark" style="display:none">
+            <div id="sidebar" class="col-auto col-10 col-sm-5 col-md-4 col-lg-3 px-0 bg-dark" style="display:none; border-right: inset 1px var(--user-color-whitish);">
                 <div class="d-flex flex-column align-items-start px-3 pt-2 text-white min-vh-100">
                     <ul class="nav nav-pills flex-column mb-auto mb-0" id="menu">                        
                         <li>
@@ -95,9 +96,11 @@
             <div id="rightPane" class="col-auto col-12 px-0">
                 <div class="bg-dark" style="padding-top: 5px; padding-bottom: 5px; width: 100%;">
                     <a id="menutrigger" href="#" onclick="toggleMenu();" class="nav-link px-0 align-middle" style="display: inline; font-size: 2em;">
-                        <i id="bars" class="nav nav-link fas fa-bars" style="display: inline; margin-right: 10px;"></i>
+                        <i id="bars" class="nav nav-link fas fa-bars" style="display: inline;"></i>
                     </a>
-                    <img src="{{ url_for('frontend.static', filename='logo/logo.png') }}" style="display: inline; width: 60px;">
+                    <a id="logoAnchor" href="/" class="nav-link px-0 align-middle" style="display: inline;">
+                        <img src="{{ url_for('frontend.static', filename='logo/logo.png') }}" style="display: inline; width: 60px;">
+                    </a>
                     <h1 id="apptitle" class="ms-1" style="display: inline; vertical-align: middle;"></h1>
                 </div>
                 <div id="main-content" class="container-fluid">

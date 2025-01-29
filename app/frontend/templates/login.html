@@ -12,9 +12,14 @@
   </div>
 
   <button type="submit" class="btn btn-primary w-100">Login</button>
+
+  <div class="text-center mt-3">
+    <a href="#" onclick="return send_reset_email();">Password dimenticata?</a>
+  </div>
 </form>
+
 <form id="updatePasswordForm" class="container mt-5 p-4 border rounded shadow-sm bg-dark" style="max-width: 400px; display: none">
-  <h2 class="text-center mb-4">Cambio password al primo accesso</h2>
+  <h2 class="text-center mb-4">Cambio password necessario</h2>
 
   <div class="mb-3">
     <input id="new_password" type="password" name="new_password" class="form-control" placeholder="Inserisci la nuova password" required>
@@ -30,8 +35,9 @@
 
   <button type="submit" class="btn btn-primary w-100">Cambia password</button>
 </form>
+
 <form id="confirmUserForm" class="container mt-5 p-4 border rounded shadow-sm bg-dark" style="max-width: 400px; display: none">
-  <h2 class="text-center mb-4">Conferma utenza</h2>
+  <h2 class="text-center mb-4">Conferma OTP</h2>
 
   <div class="mb-3">
     <input id="confirm_otp" type="text" name="confirm_otp" class="form-control" placeholder="Inserisci il codice OTP ricevuto via email" required>
@@ -40,6 +46,6 @@
   <button type="submit" class="btn btn-primary w-100">Conferma</button>
 
   <div class="text-center mt-3">
-    <a href="#" onclick="return send_validation_email();">Invia nuovamente codice OTP</a>
+    <a href="#" onclick="return resettingForm ? send_reset_email() : send_validation_email();">Invia nuovamente codice OTP</a>
   </div>
 </form>

@@ -173,3 +173,9 @@ function loadPrograms() {
         order: [[1, 'asc']] // Default ordering
     });
 }
+
+function initPrograms() {
+    $(document).ready(function() {  
+        loadPrograms();
+    });
+}

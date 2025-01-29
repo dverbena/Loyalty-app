@@ -295,3 +295,9 @@ function loadCustomers() {
         order: [[1, 'asc']] // Default ordering
     });
 }
+
+function initCustomers() {
+    $(document).ready(function() {  
+        loadCustomers();
+    });
+}

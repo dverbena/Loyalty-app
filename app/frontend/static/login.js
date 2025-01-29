@@ -1,3 +1,5 @@
+var resettingForm;
+
 function validateAndSubmitLogin(event) {
     // Prevent the default form submission
     event.preventDefault();
@@ -64,6 +66,8 @@ function validateAndSubmitConfirmUser(event) {
 }
 
 function do_login() {
+    resettingForm = false;
+
     $.ajax({
         type: 'POST',
         url: 'users/login',
@@ -120,63 +124,109 @@ function send_validation_email() {
     });
 }
 
+function send_reset_email() {
+    return $.ajax({
+        type: 'POST',
+        url: 'users/send_reset',
+        contentType: 'application/json',  // Set content type to JSON 
+        success: function (response) {     
+            resettingForm = true;
+
+            $('#success-message').text("Email spedita all'indirizzo dell'amministratore").show();
+                    
+            $("#loginForm").hide();
+            $("#updatePasswordForm").hide();
+            $("#confirmUserForm").show();
+
+            setTimeout(function () {
+                $('#success-message').fadeOut();
+            }, AppSession.successMessageDuration);
+        },
+        error: function (xhr, status, error) {
+            // If there is an error, display the error message on the page
+            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
+            $('#error-message').text(errorMessage).show();  
+    
+            setTimeout(function () {
+                $('#error-message').fadeOut();
+            }, AppSession.errorMessageDuration);
+        }
+    });
+}
+
 function validate_user() {
     $.ajax({
         type: 'PUT',
-        url: 'users/validate',
+        url: resettingForm ? 'users/admin_password_reset' : 'users/validate',
         contentType: 'application/json',  // Set content type to JSON        
         headers: { 'Authorization': localStorage.getItem('token') },
         data: JSON.stringify({ otp: $('#confirm_otp').val() }),   // Send the form data as JSON
         success: function (response) { 
-            $.ajax({
-                type: 'PUT',
-                url: 'users/password_update',
-                contentType: 'application/json',  // Set content type to JSON        
-                headers: { 'Authorization': localStorage.getItem('token') },
-                data: JSON.stringify({ password: $('#new_password').val() }),   // Send the form data as JSON
-                success: function (response) { 
-                    $.ajax({
-                        type: 'PUT',
-                        url: 'users/email_update',
-                        contentType: 'application/json',  // Set content type to JSON        
-                        headers: { 'Authorization': localStorage.getItem('token') },
-                        data: JSON.stringify({ email: $('#new_email').val() }),   // Send the form data as JSON
-                        success: function (response) {                               
-                            navigateTo('customers');
-                        },
-                        error: function (xhr, status, error) {
-                            // If there is an error, display the error message on the page
-                            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
-                            $('#error-message').text(errorMessage).show(); 
-    
-                            if((xhr.responseJSON.restart) && (xhr.responseJSON.restart === true)) {
-                                $("#loginForm").show();
-                                $("#updatePasswordForm").hide();
-                                $("#confirmUserForm").hide();
-                            }
-    
-                            setTimeout(function () {
-                                $('#error-message').fadeOut();
-                            }, AppSession.errorMessageDuration);
-                        }                
-                    });
-                },
-                error: function (xhr, status, error) {
-                    // If there is an error, display the error message on the page
-                    errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
-                    $('#error-message').text(errorMessage).show();
-    
-                    if(xhr.responseJSON.restart === true) {
-                        $("#loginForm").show();
-                        $("#updatePasswordForm").hide();
-                        $("#confirmUserForm").hide();
+            if(resettingForm){
+                resettingForm = false;                
+
+                $('#success-message').text("Password reimpostata correttamente").show();
+                        
+                $("#confirm_otp").val();
+                $("#loginForm").show();
+                $("#updatePasswordForm").hide();
+                $("#confirmUserForm").hide();
+
+                setTimeout(function () {
+                    $('#success-message').fadeOut();
+                }, AppSession.successMessageDuration);
+            }
+            else {
+                $.ajax({
+                    type: 'PUT',
+                    url: 'users/password_update',
+                    contentType: 'application/json',  // Set content type to JSON        
+                    headers: { 'Authorization': localStorage.getItem('token') },
+                    data: JSON.stringify({ password: $('#new_password').val() }),   // Send the form data as JSON
+                    success: function (response) { 
+                        $.ajax({
+                            type: 'PUT',
+                            url: 'users/email_update',
+                            contentType: 'application/json',  // Set content type to JSON        
+                            headers: { 'Authorization': localStorage.getItem('token') },
+                            data: JSON.stringify({ email: $('#new_email').val() }),   // Send the form data as JSON
+                            success: function (response) {                               
+                                navigateTo('customers');
+                            },
+                            error: function (xhr, status, error) {
+                                // If there is an error, display the error message on the page
+                                errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
+                                $('#error-message').text(errorMessage).show(); 
+        
+                                if((xhr.responseJSON.restart) && (xhr.responseJSON.restart === true)) {
+                                    $("#loginForm").show();
+                                    $("#updatePasswordForm").hide();
+                                    $("#confirmUserForm").hide();
+                                }
+        
+                                setTimeout(function () {
+                                    $('#error-message').fadeOut();
+                                }, AppSession.errorMessageDuration);
+                            }                
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        // If there is an error, display the error message on the page
+                        errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
+                        $('#error-message').text(errorMessage).show();
+        
+                        if(xhr.responseJSON.restart === true) {
+                            $("#loginForm").show();
+                            $("#updatePasswordForm").hide();
+                            $("#confirmUserForm").hide();
+                        }
+        
+                        setTimeout(function () {
+                            $('#error-message').fadeOut();
+                        }, AppSession.errorMessageDuration);
                     }
-    
-                    setTimeout(function () {
-                        $('#error-message').fadeOut();
-                    }, AppSession.errorMessageDuration);
-                }
-            });            
+                });   
+            }         
         },
         error: function (xhr, status, error) {
             // If there is an error, display the error message on the page
@@ -194,5 +244,26 @@ function validate_user() {
                 $('#error-message').fadeOut();
             }, AppSession.errorMessageDuration);
         }
+    });
+}
+
+function initLogin() {
+    resettingForm = false;    
+                           
+    $(document).ready(function() {               
+        $('#loginForm').on('submit', function(event) {
+            event.preventDefault();
+            validateAndSubmitLogin(event);
+        });
+        
+        $('#updatePasswordForm').on('submit', function(event) {
+            event.preventDefault();
+            validateAndSubmitChangePassword(event);
+        });
+        
+        $('#confirmUserForm').on('submit', function(event) {
+            event.preventDefault();
+            validateAndSubmitConfirmUser(event);
+        });
     });
 }

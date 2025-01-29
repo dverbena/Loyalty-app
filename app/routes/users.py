@@ -110,10 +110,10 @@ def update_password(current_user):
 
     # Return customer details if access is logged
     return jsonify({
-        "message": f"Password aggioranta per l'utente {existing_user.username}"
+        "message": f"Password aggiornata per l'utente {existing_user.username}"
     }), 200
 
-def send_validation_email(to_email, OTP):
+def send_email(to_email, OTP, isValidation):
     smtp_server = os.getenv("SMTP_SERVER")
     smtp_port = parse_int_with_default(os.getenv("SMTP_PORT", 587), 587)
     smtp_user = os.getenv("SMTP_USER")
@@ -127,7 +127,7 @@ def send_validation_email(to_email, OTP):
     message = MIMEMultipart("related")
     message["From"] = sender_email
     message["To"] = to_email
-    message["Subject"] = "Validazione utenza"
+    message["Subject"] = "Codice OTP"
 
     # Add the HTML body
     msg_alternative = MIMEMultipart("alternative")
@@ -136,15 +136,25 @@ def send_validation_email(to_email, OTP):
     # Embed the inline image using CID
     cid = "logo"
     html_body = f"""
-    <div style="text-align: center;">
-        <img src="cid:{cid}" alt="Logo" width="398" height="398">
-        <div style="font-size: 24px; font-family: 'Google Sans', Roboto, Arial, sans-serif; line-height: 32px; margin-top: 24px;">
-            <div>Di sequito il questo codice per validare l'utenza creata; questo codice sará valido per 5 minuti.</div>
-            <div style="text-align: center; font-size: 1.5em; margin-top: 30px">{OTP}</div>
+        <div style="text-align: center;">
+            <img src="cid:{cid}" alt="Logo" width="398" height="398">
+            <div style="font-size: 24px; font-family: 'Google Sans', Roboto, Arial, sans-serif; line-height: 32px; margin-top: 24px;">
+                <div>Di sequito il questo codice per validare l'utenza creata; questo codice sará valido per 5 minuti.</div>
+                <div style="text-align: center; font-size: 1.5em; margin-top: 30px">{OTP}</div>
+            </div>
+                
         </div>
-            
-    </div>
-    """
+        """ if isValidation else f"""
+        <div style="text-align: center;">
+            <img src="cid:{cid}" alt="Logo" width="398" height="398">
+            <div style="font-size: 24px; font-family: 'Google Sans', Roboto, Arial, sans-serif; line-height: 32px; margin-top: 24px;">
+                <div>Di sequito il questo codice per reimpostare la password amministrativa; questo codice sará valido per 5 minuti.</div>
+                <div style="text-align: center; font-size: 1.5em; margin-top: 30px">{OTP}</div>
+            </div>
+                
+        </div>
+        """
+
     msg_alternative.attach(MIMEText(html_body, "html"))
 
     # Attach the inline image
@@ -174,9 +184,9 @@ def validate_send_email(current_user):
         session['validation_timestamp'] = datetime.now(timezone.utc)
 
         if data.email:            
-            send_validation_email(data.email, session['validation_code'])
+            send_email(data.email, session['validation_code'], True)
         else:
-            send_validation_email(current_user.email, session['validation_code'])
+            send_email(current_user.email, session['validation_code'], True)
         
         logger.info(f"Validation email sent out to: {current_user.username}")
     except Exception as e:
@@ -188,6 +198,94 @@ def validate_send_email(current_user):
         "message": f"Email di validazione spedita all'utente {current_user.username}"
     }), 200
 
+@bp.route('/send_reset', methods=['POST'])
+def reset_send_email():
+    # Log the start of the request processing
+    logger.info("Received request to send password reset email")    
+    
+    try:
+        session['validation_code'] = str(random.randint(100000, 999999))
+        session['validation_timestamp'] = datetime.now(timezone.utc)
+
+        with next(get_db()) as db:
+            admin = db.query(User).filter((User.username == 'admin') & (User.validated == True)).first()
+
+        if admin:            
+            send_email(admin.email, session['validation_code'], False)
+        
+        logger.info("Password reset email sent out to admin")
+    except Exception as e:
+        logger.error(f"Error: {str(e)}") 
+        return jsonify({"error": str(e)}), 400    
+
+    # Return customer details if access is logged
+    return jsonify({
+        "message": "Email per la reimpostazione della password spedita all'utente admin"
+    }), 200
+
+def check_code(code):   
+    # returns: 0 if matching, 1 if not matching, 2 if expired, 3 if not OTP in session 
+    validation_code = session.get('validation_code')
+    validation_timestamp = session.get('validation_timestamp')
+
+    if validation_code and validation_timestamp:
+        logger.debug(f"session: {validation_code}, request: {code}")
+
+        # Check if the session item is expired
+        if datetime.now(timezone.utc) - validation_timestamp > timedelta(minutes=5):
+            session.pop('validation_code', None)  # Remove expired session item
+            session.pop('validation_timestamp', None)
+
+            return 2
+        
+        return 0 if validation_code == code else 1
+    else:
+        return 3
+
+@bp.route('/admin_password_reset', methods=['PUT'])
+def reset_admin_password():
+    try:
+        # Log the start of the request processing
+        logger.info("Received request to reset admin password")
+
+        # Validate the input data using Pydantic
+        data = OTPRequest(**request.get_json())
+        logger.debug(f"Validated input data: {data.dict()}")
+
+    except ValidationError as e:
+        logger.error(f"Validation error: {str(e)}")  # Log the validation error
+        return jsonify({"error": str(e)}), 400  
+    
+    isValid = check_code(data.otp)
+
+    if isValid == 1:
+        return jsonify({"error": "OTP invalido"}), 400
+
+    if isValid == 2:
+        return jsonify({"error": "OTP scaduto"}), 400
+
+    if isValid == 3:
+        return jsonify({"restart": True, "error": "OTP non trovato, meglio ricominciare da capo :-)"}), 400 
+    
+    with next(get_db()) as db:
+        existing_user = db.query(User).filter(User.username == 'admin').first()
+
+        if not existing_user:
+            return jsonify({"error": "Utenza inesistente"}), 400        
+        
+        existing_user.password = generate_password_hash(os.getenv("DEFAULT_PASSWORD", "changeme"))
+        existing_user.validated = False
+        
+        db.commit()
+
+        session.pop('validation_code', None)  # Remove expired session item
+        session.pop('validation_timestamp', None)
+
+        logger.info(f"User validated: {existing_user.username}")
+
+    return jsonify({
+        "message": f"Utente {existing_user.username} validato"
+    }), 200
 
 @bp.route('/validate', methods=['PUT'])
 @any_valid_token_required
@@ -204,36 +302,30 @@ def validate(current_user):
         logger.error(f"Validation error: {str(e)}")  # Log the validation error
         return jsonify({"error": str(e)}), 400  
     
-    validation_code = session.get('validation_code')
-    validation_timestamp = session.get('validation_timestamp')
+    isValid = check_code(data.otp)
 
-    if validation_code and validation_timestamp:
-        logger.debug(f"session: {validation_code}, request: {data.otp}")
-        # Check if the session item is expired
-        if datetime.now(timezone.utc) - validation_timestamp > timedelta(minutes=5):
-            session.pop('validation_code', None)  # Remove expired session item
-            session.pop('validation_timestamp', None)
+    if isValid == 1:
+        return jsonify({"error": "OTP invalido"}), 400
 
-            return jsonify({"error": "OTP scaduto"}), 400
-        else:
-            if validation_code == data.otp:
-                with next(get_db()) as db:
-                    existing_user = db.query(User).filter(User.id == current_user.id).first()
+    if isValid == 2:
+        return jsonify({"error": "OTP scaduto"}), 400
 
-                    if not existing_user:
-                        return jsonify({"error": "Utenza inesistente"}), 400
-                    
-                    existing_user.validated = True    
-                    db.commit()
+    if isValid == 3:
+        return jsonify({"restart": True, "error": "OTP non trovato, meglio ricominciare da capo :-)"}), 400 
+    
+    with next(get_db()) as db:
+        existing_user = db.query(User).filter(User.id == current_user.id).first()
 
-                    session.pop('validation_code', None)  # Remove expired session item
-                    session.pop('validation_timestamp', None)
+        if not existing_user:
+            return jsonify({"error": "Utenza inesistente"}), 400
+        
+        existing_user.validated = True    
+        db.commit()
 
-                    logger.info(f"User validated: {existing_user.username}")
-            else:
-                return jsonify({"error": "OTP non corretto"}), 400
-    else:
-        return jsonify({"restart": True, "error": "OTP non trovato, meglio ricominciare da capo :-)"}), 400     
+        session.pop('validation_code', None)  # Remove expired session item
+        session.pop('validation_timestamp', None)
+
+        logger.info(f"User validated: {existing_user.username}")
 
     return jsonify({
         "message": f"Utente {existing_user.username} validato"

@@ -1,5 +1,10 @@
-function initNewProgram() {      
-    $(document).ready(function() {
+function initNewProgram() {
+    $(document).ready(function() {    
+        $('#programForm').on('submit', function(event) {
+            event.preventDefault();
+            validateAndSubmitNewProgram(event);
+        });
+
         flatpickr(".date-picker", {
             dateFormat: "d/m/Y",
             allowInput: true, // Optional: Allows manual entry

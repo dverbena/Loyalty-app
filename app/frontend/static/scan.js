@@ -53,7 +53,7 @@ const startScan = () => {
     }
 };
 
-const initializeCameraDropDown = () => {
+const initCameraDropDown = () => {
     return Html5Qrcode.getCameras().then((devices) => {
         const dropdown = document.getElementById('cameraDropdown');
         
@@ -94,8 +94,8 @@ const initializeCameraDropDown = () => {
 }
 
 // Initialize Camera (Lazy Load)
-const initializeCamera = () => {
-    initializeCameraDropDown().then(() => {    
+const initCamera = () => {
+    initCameraDropDown().then(() => {    
         if (!AppState.cameraInitialized) {
             // Lazy load the Html5Qrcode library
             const script = document.createElement('script');

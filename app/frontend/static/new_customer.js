@@ -1,5 +1,12 @@
 function initNewCustomer() {      
     $(document).ready(function() {
+        $('#customerForm').on('submit', function(event) {
+            event.preventDefault();
+            validateAndSubmitNewCustomer(event);
+        });
+        
+        populateProgramsForCustomer();
+        
         if(AppSession.customerBeingEdited) {
             $('#buttonsCreate').hide();
             $('#access_import_div').hide();

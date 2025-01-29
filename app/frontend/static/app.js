@@ -66,60 +66,36 @@ const navigateTo = (page) => {
             stopScanning().finally(() => {
                 // Trigger page-specific logic
                 if (page === 'customers') {
-                    // $('#filterForm').on('submit', function(event) {
-                    //     event.preventDefault();
-                    //     //filterCustomers(event);
-                    // });
+                    initCustomers();
                     
-                    //filterCustomers();
-                    loadCustomers();
                     startMessagesTimer();
                     startRewardBannerTimer();
-                } else {
+                } 
+                else {
                     stopMessagesTimer();
                     stopRewardBannerTimer();
     
                     if (page === 'programs') {
-                        loadPrograms();
+                        initPrograms();
                         startMessagesTimerProgram();
-                    } else {
+                    } 
+                    else {
                         stopMessagesTimerProgram();
     
                         if (page === 'scan') {
-                            initializeCamera();
-                        } else {
-                            if (page === 'new_customer') {
-                                $('#customerForm').on('submit', function(event) {
-                                    event.preventDefault();
-                                    validateAndSubmitNewCustomer(event);
-                                });
-    
+                            initCamera();
+                        } 
+                        else {
+                            if (page === 'new_customer') {    
                                 initNewCustomer();
-                                populateProgramsForCustomer();
-                            } else {
-                                if (page === 'new_program') {
-                                    $('#programForm').on('submit', function(event) {
-                                        event.preventDefault();
-                                        validateAndSubmitNewProgram(event);
-                                    });
-    
+                            } 
+                            else {
+                                if (page === 'new_program') {    
                                     initNewProgram();
-                                } else {
+                                } 
+                                else {
                                     if (page === 'login') {
-                                        $('#loginForm').on('submit', function(event) {
-                                            event.preventDefault();
-                                            validateAndSubmitLogin(event);
-                                        });
-                                        
-                                        $('#updatePasswordForm').on('submit', function(event) {
-                                            event.preventDefault();
-                                            validateAndSubmitChangePassword(event);
-                                        });
-                                        
-                                        $('#confirmUserForm').on('submit', function(event) {
-                                            event.preventDefault();
-                                            validateAndSubmitConfirmUser(event);
-                                        });
+                                        initLogin();
                                     }
                                 }
                             }
