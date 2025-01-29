@@ -7,6 +7,39 @@ body {
     color: var(--user-body-color) !important;
 }
 
+#loading-indicator {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--user-color-dark);
+    color: var(--user-color-whitish);
+    padding: 15px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 1000; /* Ensures it appears on top of everything */
+}
+
+.spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--user-color-whitish);
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .bg-dark{
     background-color: var(--user-color) !important;
 }

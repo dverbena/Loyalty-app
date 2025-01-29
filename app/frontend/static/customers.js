@@ -74,12 +74,12 @@ const stopRewardBannerTimer = () => {
 function handleAction(action, id, name, last_name) {
     switch (action) {
         case 'check_in':
-            $.ajax({
+            ajaxRequest({
                 type: 'GET',
                 url: `accesses/reward_due/${id}`,
                 headers: { 'Authorization': localStorage.getItem('token') },
                 success: function (responseReward) {//sendRewardMessageToCustomersPage
-                    $.ajax({
+                    ajaxRequest({
                         type: 'POST',
                         url: 'accesses/add',
                         contentType: 'application/json',
@@ -101,7 +101,7 @@ function handleAction(action, id, name, last_name) {
             
             break;
         case 'resend_qr':
-            $.ajax({
+            ajaxRequest({
                 type: 'POST',
                 url: 'customers/send-qr-code',
                 contentType: 'application/json',  // Set content type to JSON
@@ -123,7 +123,7 @@ function handleAction(action, id, name, last_name) {
             break;
         case 'delete':            
             if (confirm(`Are you sure you want to delete ${name} ${last_name}?`)) {
-                $.ajax({
+                ajaxRequest({
                     type: 'DELETE',
                     url: `customers/${id}`,  // Adjust the endpoint as needed
                     headers: { 'Authorization': localStorage.getItem('token') },
@@ -142,7 +142,7 @@ function handleAction(action, id, name, last_name) {
             break;
         case 'access_logs':
             // Make AJAX call to fetch access logs
-            $.ajax({
+            ajaxRequest({
                 url: `/accesses/customer/${id}`,  // The endpoint to fetch access logs
                 type: 'GET',
                 headers: { 'Authorization': localStorage.getItem('token') },
@@ -181,7 +181,7 @@ function handleAction(action, id, name, last_name) {
 //         last_name: $('#filterLastName').val()
 //     };
 
-//     $.ajax({
+//     ajaxRequest({
 //         type: 'GET',
 //         url: `customers/search?name=${formData.name}&last_name=${formData.last_name}`,
 //         headers: { 'Authorization': localStorage.getItem('token') },

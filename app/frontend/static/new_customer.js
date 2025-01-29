@@ -12,7 +12,7 @@ function initNewCustomer() {
             $('#access_import_div').hide();
             $('#buttonsEdit').show();    
 
-            $.ajax({
+            ajaxRequest({
                 type: 'GET',
                 url: `/customers/${AppSession.customerBeingEdited}`,
                 headers: { 'Authorization': localStorage.getItem('token') },
@@ -56,7 +56,7 @@ function populateProgramsForCustomer() {
         });
 
         // Fetch programs from the API
-        $.ajax({
+        ajaxRequest({
             url: "/programs/current",
             method: "GET",
             dataType: "json",
@@ -74,7 +74,7 @@ function populateProgramsForCustomer() {
 
                 if (AppSession.customerBeingEdited) {
                     // Fetch programs linked to the customer being edited
-                    $.ajax({
+                    ajaxRequest({
                         url: `/programs/customer/${AppSession.customerBeingEdited}`,
                         method: "GET",
                         headers: { 
@@ -138,7 +138,7 @@ function submit_new_or_modify_customer() {
     if(!AppSession.customerBeingEdited)        
         formData.access_import = parseInt($('#access_import').val());
 
-    $.ajax({
+    ajaxRequest({
         type: AppSession.customerBeingEdited ? 'PUT' : 'POST',
         url: AppSession.customerBeingEdited ? `customers/edit/${AppSession.customerBeingEdited}` : '/customers/add',
         contentType: 'application/json',  // Set content type to JSON
@@ -146,7 +146,7 @@ function submit_new_or_modify_customer() {
         headers: { 'Authorization': localStorage.getItem('token') },
         success: function (response) {   
             if((!AppSession.customerBeingEdited) || (response.email_changed)) {
-                $.ajax({
+                ajaxRequest({
                     type: 'POST',
                     url: 'customers/send-qr-code',
                     headers: { 'Authorization': localStorage.getItem('token') },

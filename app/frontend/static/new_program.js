@@ -14,7 +14,7 @@ function initNewProgram() {
             $('#buttonsCreate').hide();
             $('#buttonsEdit').show();    
 
-            $.ajax({
+            ajaxRequest({
                 type: 'GET',
                 url: `/programs/${AppSession.programBeingEdited}`,
                 headers: { 'Authorization': localStorage.getItem('token') },
@@ -91,7 +91,7 @@ function submit_new_or_modify_program() {
     };
 
     console.log(formData);
-    $.ajax({
+    ajaxRequest({
         type: AppSession.programBeingEdited ? 'PUT' : 'POST',
         headers: { 'Authorization': localStorage.getItem('token') },
         url: AppSession.programBeingEdited ? `programs/edit/${AppSession.programBeingEdited}` : '/programs/add',

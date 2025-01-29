@@ -68,7 +68,7 @@ function validateAndSubmitConfirmUser(event) {
 function do_login() {
     resettingForm = false;
 
-    $.ajax({
+    ajaxRequest({
         type: 'POST',
         url: 'users/login',
         contentType: 'application/json',  // Set content type to JSON
@@ -99,7 +99,7 @@ function do_login() {
 }
 
 function send_validation_email() {
-    return $.ajax({
+    return ajaxRequest({
         type: 'POST',
         url: 'users/send_validate',
         contentType: 'application/json',  // Set content type to JSON        
@@ -125,7 +125,7 @@ function send_validation_email() {
 }
 
 function send_reset_email() {
-    return $.ajax({
+    return ajaxRequest({
         type: 'POST',
         url: 'users/send_reset',
         contentType: 'application/json',  // Set content type to JSON 
@@ -155,7 +155,7 @@ function send_reset_email() {
 }
 
 function validate_user() {
-    $.ajax({
+    ajaxRequest({
         type: 'PUT',
         url: resettingForm ? 'users/admin_password_reset' : 'users/validate',
         contentType: 'application/json',  // Set content type to JSON        
@@ -177,14 +177,14 @@ function validate_user() {
                 }, AppSession.successMessageDuration);
             }
             else {
-                $.ajax({
+                ajaxRequest({
                     type: 'PUT',
                     url: 'users/password_update',
                     contentType: 'application/json',  // Set content type to JSON        
                     headers: { 'Authorization': localStorage.getItem('token') },
                     data: JSON.stringify({ password: $('#new_password').val() }),   // Send the form data as JSON
                     success: function (response) { 
-                        $.ajax({
+                        ajaxRequest({
                             type: 'PUT',
                             url: 'users/email_update',
                             contentType: 'application/json',  // Set content type to JSON        

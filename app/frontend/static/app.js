@@ -13,7 +13,8 @@ var AppSession = {
     menuCollapsed: true,
     lastPageRequested: null,
     successMessageDuration: 3000,
-    errorMessageDuration: 5000
+    errorMessageDuration: 5000,
+    activeRequests: 0
 };
 
 var AppTitles = {
@@ -30,6 +31,26 @@ const AppState = {
     html5QrcodeScanner: null,
     deviceId: null
 };
+
+const ajaxRequest = (options) => {
+    AppSession.activeRequests++;
+    $("#loading-indicator").fadeIn();
+
+    var originalComplete = options.complete;
+    options.complete = function(xhr, status) {
+        AppSession.activeRequests--;
+
+        if (AppSession.activeRequests === 0) {
+            $("#loading-indicator").fadeOut();
+        }
+        
+        if (originalComplete) {
+            originalComplete(xhr, status);
+        }
+    };
+
+    return $.ajax(options);
+}
 
 // Function to initialize the application and handle default navigation
 const initializeApp = () => {
@@ -56,7 +77,7 @@ const navigateTo = (page) => {
     $("#apptitle").text(AppTitles[page]);
 
     // Fetch and replace content
-    $.ajax({
+    ajaxRequest({
         url: `/${page}`,
         headers: { 'Authorization': localStorage.getItem('token') },
         method: 'GET', 

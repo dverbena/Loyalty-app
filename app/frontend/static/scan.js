@@ -121,12 +121,12 @@ const handleScan = (decodedText) => {
     console.log("Scanned QR Code:", decodedText);
 
     stopScanning().then(() => {        
-        $.ajax({
+        ajaxRequest({
             type: 'GET',
             url: `accesses/reward_due_qr/${decodedText}`,
             headers: { 'Authorization': localStorage.getItem('token') },
             success: function (responseReward) {//sendRewardMessageToCustomersPage
-                $.ajax({
+                ajaxRequest({
                     type: 'POST',
                     headers: { 'Authorization': localStorage.getItem('token') },
                     url: 'accesses/add',

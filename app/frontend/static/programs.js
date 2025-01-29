@@ -51,7 +51,7 @@ function handleActionProgram(action, id, name) {
             break;            
         case 'delete':            
             if (confirm(`Are you sure you want to delete ${name}?`)) {
-                $.ajax({
+                ajaxRequest({
                     type: 'DELETE',
                     headers: { 'Authorization': localStorage.getItem('token') },
                     url: `programs/${id}`,  // Adjust the endpoint as needed
@@ -74,7 +74,7 @@ function handleActionProgram(action, id, name) {
 }
 
 // function filterPrograms(event) {
-//     $.ajax({
+//     ajaxRequest({
 //         type: 'GET',
 //         url: 'programs/all',
 //         headers: { 'Authorization': localStorage.getItem('token') },
