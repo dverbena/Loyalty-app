@@ -1,4 +1,5 @@
 var customersTable;
+var accessTable;
 
 const sendMessageToCustomersPage = (message) => {
     AppSession.messageToCustomerPage = { msg: message, type: 'info' };
@@ -139,36 +140,73 @@ function handleAction(action, id, name, last_name) {
                     }
                 });
             }
+
             break;
         case 'access_logs':
-            // Make AJAX call to fetch access logs
-            ajaxRequest({
-                url: `/accesses/customer/${id}`,  // The endpoint to fetch access logs
-                type: 'GET',
-                headers: { 'Authorization': localStorage.getItem('token') },
-                success: function(data) {
-                    // Empty the table before adding new rows
-                    $('#accessLogsTable tbody').empty();
+            // // Make AJAX call to fetch access logs
+            // ajaxRequest({
+            //     url: `/accesses/customer/${id}`,  // The endpoint to fetch access logs
+            //     type: 'GET',
+            //     headers: { 'Authorization': localStorage.getItem('token') },
+            //     success: function(data) {
+            //         // Empty the table before adding new rows
+            //         $('#accessLogsTable tbody').empty();
 
-                    // Check if we have data
-                    if (data && data.length > 0) {
-                        // Populate the table with access times
-                        data.forEach(function(log) {
-                            var formattedDate = moment(log.access_time).format('DD/MM/YYYY HH:mm');
-                            $('#accessLogsTable tbody').append(`<tr><td>${formattedDate}</td></tr>`);
-                        });
-                    } else {
-                        // If no data, display a message
-                        $('#accessLogsTable tbody').append('<tr><td>Nessun accesso effettuato</td></tr>');
-                    }
+            //         // Check if we have data
+            //         if (data && data.length > 0) {
+            //             // Populate the table with access times
+            //             data.forEach(function(log) {
+            //                 var formattedDate = moment(log.access_time).format('DD/MM/YYYY HH:mm');
+            //                 $('#accessLogsTable tbody').append(`<tr><td>${formattedDate}</td></tr>`);
+            //             });
+            //         } else {
+            //             // If no data, display a message
+            //             $('#accessLogsTable tbody').append('<tr><td>Nessun accesso effettuato</td></tr>');
+            //         }
 
-                    // Show the modal
-                    $('#accessLogsModal').modal('show');
-                },
-                error: function() {
-                    sendErrorMessageToCustomersPage("Errore nel tentativo di registrare l'accesso");
-                }
-            });
+            //         // Show the modal
+            //         $('#accessLogsModal').modal('show');
+            //     },
+            //     error: function() {
+            //         sendErrorMessageToCustomersPage("Errore nel tentativo di registrare l'accesso");
+            //     }
+            // });
+            
+            $('#accessLogsModal').modal('show');            
+            
+            if(accessTable)
+                accessTable.ajax.url(`/accesses/customer/${id}`).load();
+            else {
+                accessTable = $('#accessLogsTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    autoWidth: false,
+                    searching: false,
+                    ajax: {
+                        url: `/accesses/customer/${id}`,
+                        headers: { 'Authorization': localStorage.getItem('token') },
+                        dataSrc: 'data' // Key in the response containing the data array
+                    },
+                    language: {
+                        url: 'https://cdn.datatables.net/plug-ins/2.2.1/i18n/it-IT.json',
+                    },
+                    columns: [                    
+                        { 
+                            data: 'access_time', 
+                            render: function(data, type, row, meta) {
+                                return moment(row.access_time).format('DD/MM/YYYY HH:mm');
+                            }
+                        }
+                    ],
+                    lengthMenu: [
+                        [10, 25, 50, 100],
+                        [10, 25, 50, 100]
+                    ],
+                    pageLength: 10,
+                    //order: [[1, 'desc']] // Default ordering
+                });
+            }
+
             break;
         default:
             console.log('Unknown action');
@@ -299,5 +337,6 @@ function loadCustomers() {
 function initCustomers() {
     $(document).ready(function() {  
         loadCustomers();
+        accessTable = null;
     });
 }

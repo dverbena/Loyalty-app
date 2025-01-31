@@ -69,22 +69,53 @@ def get_access_logs_endpoint(current_user, id):
     logger.info(f"Fetching accesses for customer_id: {id}")
 
     with next(get_db()) as db:
+        start = int(request.args.get('start', 0))
+        length = int(request.args.get('length', 10))
+        search_value = request.args.get('search[value]', '').lower()
+        order_column_index = int(request.args.get('order[0][column]', 0))
+        order_direction = request.args.get('order[0][dir]', 'asc')
+
+        # Define column mapping for ordering
+        column_mapping = {
+            1: 'access_time'
+        }
+
+        order_column = column_mapping.get(order_column_index, 'access_time')
+
         customer = db.query(Customer).filter(Customer.id == id).first()
 
         if not customer:
             logger.error(f"Customer not found for ID: {id}")
             return jsonify({"error": "Customer not found"}), 404
 
-        logs = get_access_logs_without_imported(db, id)    
-        logger.debug(f"Fetched {len(logs)} accesses for customer_id: {id}")
+        logs = get_access_logs_without_imported(db, id) 
 
-    return jsonify([{
-        "id": log.id,
-        "customer_id": log.customer_id,
-        "imported": log.is_imported,
-        "reward": log.is_reward,
-        "access_time": log.access_time
-    } for log in logs]), 200
+        total_records = logs.count()
+
+        if order_direction == 'desc':
+            logs = logs.order_by(getattr(AccessLog, order_column).desc())
+        else:
+            logs = logs.order_by(getattr(AccessLog, order_column))
+        
+        logs = logs.offset(start).limit(length).all()
+    
+        logger.debug(f"Fetched {total_records} accesses for customer_id: {id}")
+    
+        # Build response
+        data = [{
+            "id": log.id,
+            "customer_id": log.customer_id,
+            "imported": log.is_imported,
+            "reward": log.is_reward,
+            "access_time": log.access_time
+        } for log in logs]
+
+        return jsonify({
+            "draw": int(request.args.get('draw', 1)),
+            "recordsTotal": total_records,
+            "recordsFiltered": total_records if not search_value else len(data),
+            "data": data
+        })  
 
 @bp.route("/customer/qr/<qr_code>", methods=["GET"])
 @token_required

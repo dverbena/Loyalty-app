@@ -124,7 +124,7 @@ def get_access_logs_without_imported(db: Session, customer_id: int = None):
         if customer_id:
             query = query.filter((AccessLog.customer_id == customer_id) & (AccessLog.is_imported == False))
 
-    return query.order_by(AccessLog.access_time.desc()).all()
+    return query
 
 def get_programs(db: Session, skip: int = 0, limit: int = 10):
     with db:
