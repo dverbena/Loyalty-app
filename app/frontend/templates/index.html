@@ -75,27 +75,25 @@
                             </a>
                         </li>
                     </ul>
-                    <!-- <hr>
+                    <hr>
                     <div class="dropdown pb-4">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
-                            <span class="d-sm-inline mx-1">user</span>
+                            <img src="{{ url_for('frontend.static', filename='a.png') }}" alt="Admin" width="30" height="30" class="rounded-circle">
+                            <span class="d-sm-inline mx-1">Admin</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                            <li><a class="dropdown-item" href="#">New project...</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li>
+                            <li><a class="dropdown-item" href="#">Profilo</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="toggleMenu(); logout();">Logout</a></li>
+                            <!-- <li>
                                 <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Sign out</a></li>
+                            </li> -->
                         </ul>
-                    </div> -->
-                    <div>
+                    </div> 
+                    <!-- <div>
                         <a href="#" onclick="toggleMenu(); logout();" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
                             <i class="fas fa-arrow-right-from-bracket"></i><span class="ms-1 d-sm-inline">Logout</span>
                         </a>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div id="rightPane" class="col-auto col-12 px-0">
