@@ -67,6 +67,7 @@ function validateAndSubmitConfirmUser(event) {
 
 function do_login() {
     resettingForm = false;
+    $("#new_email").show();         
 
     ajaxRequest({
         type: 'POST',
@@ -125,18 +126,23 @@ function send_validation_email() {
 }
 
 function send_reset_email() {
+    resettingForm = true;
+    $("#new_email").hide();   
+
     return ajaxRequest({
         type: 'POST',
         url: 'users/send_reset',
         contentType: 'application/json',  // Set content type to JSON 
-        success: function (response) {     
-            resettingForm = true;
+        success: function (response) {  
 
             $('#success-message').text("Email spedita all'indirizzo dell'amministratore").show();
                     
             $("#loginForm").hide();
             $("#updatePasswordForm").hide();
             $("#confirmUserForm").show();
+              
+            resettingForm = false;
+            $("#new_email").show(); 
 
             setTimeout(function () {
                 $('#success-message').fadeOut();
@@ -163,7 +169,8 @@ function validate_user() {
         data: JSON.stringify({ otp: $('#confirm_otp').val() }),   // Send the form data as JSON
         success: function (response) { 
             if(resettingForm){
-                resettingForm = false;                
+                resettingForm = false;   
+                $("#new_email").show();                
 
                 $('#success-message').text("Password reimpostata correttamente").show();
                         
@@ -248,7 +255,8 @@ function validate_user() {
 }
 
 function initLogin() {
-    resettingForm = false;    
+    resettingForm = false;   
+    $("#new_email").show();          
                            
     $(document).ready(function() {               
         $('#loginForm').on('submit', function(event) {
