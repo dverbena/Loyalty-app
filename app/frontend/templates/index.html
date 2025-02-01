@@ -82,7 +82,7 @@
                             <span class="d-sm-inline mx-1">Admin</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-                            <li><a class="dropdown-item" href="#">Profilo</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="toggleMenu(); navigateTo('profile');">Profilo</a></li>
                             <li><a class="dropdown-item" href="#" onclick="toggleMenu(); logout();">Logout</a></li>
                             <!-- <li>
                                 <hr class="dropdown-divider">
@@ -126,6 +126,7 @@
     <script src="{{ url_for('frontend.static', filename='programs.js') }}"></script>
     <script src="{{ url_for('frontend.static', filename='scan.js') }}"></script>
     <script src="{{ url_for('frontend.static', filename='login.js') }}"></script>
+    <script src="{{ url_for('frontend.static', filename='profile.js') }}"></script>
     <script src="{{ url_for('frontend.static', filename='app.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('frontend.static', filename='style.css') }}">    
 </body>

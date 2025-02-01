@@ -118,6 +118,11 @@ const navigateTo = (page) => {
                                     if (page === 'login') {
                                         initLogin();
                                     }
+                                    else {
+                                        if (page === 'profile') {
+                                            initProfile();
+                                        }
+                                    }
                                 }
                             }
                         }

@@ -139,7 +139,7 @@ def send_email(to_email, OTP, isValidation):
         <div style="text-align: center;">
             <img src="cid:{cid}" alt="Logo" width="398" height="398">
             <div style="font-size: 24px; font-family: 'Google Sans', Roboto, Arial, sans-serif; line-height: 32px; margin-top: 24px;">
-                <div>Di sequito il questo codice per validare l'utenza creata; questo codice sará valido per 5 minuti.</div>
+                <div>Di sequito il questo codice per validare l'utenza creata/modificata; questo codice sará valido per 5 minuti.</div>
                 <div style="text-align: center; font-size: 1.5em; margin-top: 30px">{OTP}</div>
             </div>
                 

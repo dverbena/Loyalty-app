@@ -1,0 +1,34 @@
+<div id="success-message" class="alert alert-success mt-3" style="display: none;"></div>
+<div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+
+<form id="updateInfoForm" class="container mt-5 p-4 border rounded shadow-sm bg-dark" style="max-width: 400px;">
+  <h2 class="text-center mb-4">Profilo admin</h2>
+
+  <div class="mb-3">
+    <input id="new_password" type="password" name="new_password" class="form-control" placeholder="Inserisci la nuova password">
+  </div>
+
+  <div class="mb-3">
+    <input id="new_password_confirm" type="password" name="new_password_confirm" class="form-control" placeholder="Conferma la nuova password">
+  </div>
+
+  <div class="mb-3">
+    <input id="new_email" type="email" name="new_email" class="form-control" placeholder="Indirizzo email" value="{{ user.email }}">
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100">Salva</button>
+</form>
+
+<form id="confirmUserForm" class="container mt-5 p-4 border rounded shadow-sm bg-dark" style="max-width: 400px; display: none">
+  <h2 class="text-center mb-4">Conferma OTP</h2>
+
+  <div class="mb-3">
+    <input id="confirm_otp" type="text" name="confirm_otp" class="form-control" placeholder="Inserisci il codice OTP ricevuto via email" required>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100">Conferma</button>
+
+  <div class="text-center mt-3">
+    <a href="#" onclick="send_validation_email();">Invia nuovamente codice OTP</a>
+  </div>
+</form>

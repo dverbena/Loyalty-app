@@ -70,3 +70,8 @@ def new_program(current_user):
 @bp.route('/login')
 def login():
     return render_template('login.html')
+
+@bp.route('/profile')
+@token_required
+def profile(current_user):
+    return render_template('profile.html', user=current_user)
