@@ -32,7 +32,7 @@ function validateAndSubmitChangeInfoConfirmUser(event) {
 
     // Use the built-in form validation API
     if (form.checkValidity()) {
-        validate_user();
+        validate_customer();
     } else {
         // Show validation errors
         form.reportValidity();
@@ -91,9 +91,9 @@ function updateEmail() {
 function onSuccess() {
     $('#success-message').text("Profilo aggiornato correttamente").show();
                                     
-    $("#confirm_otp").val();
-    $("#new_password").val();
-    $("#new_password_confirm").val();
+    $("#confirm_otp").val("");
+    $("#new_password").val("");
+    $("#new_password_confirm").val("");
     
     $("#updateInfoForm").show();
     $("#confirmUserForm").hide();
@@ -105,11 +105,11 @@ function onSuccess() {
 
 function onError(errorMessage, restart) {
     $('#error-message').text(errorMessage).show();              
-    $("#confirm_otp").val();
+    $("#confirm_otp").val("");
 
     if(restart === true) {
-        $("#new_password").val();
-        $("#new_password_confirm").val();
+        $("#new_password").val("");
+        $("#new_password_confirm").val("");
         $("#updateInfoForm").show();
         $("#confirmUserForm").hide();
     }
@@ -119,7 +119,7 @@ function onError(errorMessage, restart) {
     }, AppSession.errorMessageDuration);
 }
 
-function validate_user() {
+function validate_customer() {
     ajaxRequest({
         type: 'PUT',
         url: 'users/validate',

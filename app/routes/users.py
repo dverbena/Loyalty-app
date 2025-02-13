@@ -210,8 +210,14 @@ def reset_send_email():
         with next(get_db()) as db:
             admin = db.query(User).filter((User.username == 'admin') & (User.validated == True)).first()
 
-        if admin:            
-            send_email(admin.email, session['validation_code'], False)
+        if admin:          
+            if admin.email:            
+                send_email(admin.email, session['validation_code'], False)
+            else:
+                return jsonify({"error": f"Email non registrata per {admin.username}"}), 400
+        else:
+            return jsonify({"error": "Utenza inesistente"}), 400
+        
         
         logger.info("Password reset email sent out to admin")
     except Exception as e:
@@ -357,7 +363,6 @@ def update_email(current_user):
 
         logger.info(f"User email updated: {existing_user.username}")
 
-    # Return customer details if access is logged
     return jsonify({
         "message": f"Email aggioranta per l'utente {existing_user.username}"
     }), 200
@@ -369,3 +374,40 @@ def logout(current_user):
     logger.info(f"Received request to logout user {current_user.username}")
 
     return jsonify({"message": f"Utente sloggato"})
+
+@bp.route('/admin_validated', methods=['GET'])
+def is_admin_validated():
+    # Log the start of the request processing
+    logger.info("Received request to check whether admin user had been validated already")
+    
+    with next(get_db()) as db:
+        admin_user = db.query(User).filter(User.username == 'admin').first()
+
+        if not admin_user:
+            return jsonify({"error": "Utenza admin inesistente"}), 400        
+
+        logger.info(f"admin is {'' if admin_user.validated == True else 'NOT ' }validated")
+
+    return jsonify({
+        "validated": admin_user.validated
+    }), 200
+
+@bp.route('/details', methods=['GET'])
+@any_valid_token_required
+def user_details(current_user):
+    # Log the start of the request processing
+    logger.info(f"Received request to get details for user {current_user.username}")
+
+    with next(get_db()) as db:
+        existing_user = db.query(User).filter(User.id == current_user.id).first()
+
+    if not existing_user:
+        return jsonify({"error": "Utenza inesistente"}), 400
+
+    return jsonify({
+        "id": existing_user.id,
+        "username": existing_user.username,
+        "email": existing_user.email,
+        "validated": existing_user.validated,
+        "created_at": existing_user.created_at
+    }), 200

@@ -16,6 +16,50 @@ function validateAndSubmitLogin(event) {
     }
 }
 
+function showNewEmail() {
+    $("#new_email").show();   
+
+    ajaxRequest({
+        type: 'GET',
+        url: 'users/details',     
+        headers: { 'Authorization': localStorage.getItem('token') },   // Send the form data as JSON
+        success: function (response) {
+            $("#new_email").val(response.email); 
+        },
+        error: function (xhr, status, error) {
+            // If there is an error, display the error message on the page
+            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
+            $('#error-message').text(errorMessage).show();
+
+            setTimeout(function () {
+                $('#error-message').fadeOut();
+            }, AppSession.errorMessageDuration);
+        }
+    });  
+}
+
+function showLoginForm() {    
+    $("#loginForm").show();    
+
+    ajaxRequest({
+        type: 'GET',
+        url: 'users/admin_validated',
+        success: function (response) {
+            if (response.validated === true) $("#sendResetEmail").show(); 
+            else $("#sendResetEmail").hide(); 
+        },
+        error: function (xhr, status, error) {
+            // If there is an error, display the error message on the page
+            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
+            $('#error-message').text(errorMessage).show();
+
+            setTimeout(function () {
+                $('#error-message').fadeOut();
+            }, AppSession.errorMessageDuration);
+        }
+    });  
+}
+
 function validateAndSubmitChangePassword(event) {    
     // Prevent the default form submission
     event.preventDefault();
@@ -31,7 +75,7 @@ function validateAndSubmitChangePassword(event) {
                 $("#updatePasswordForm").hide();
                 $("#confirmUserForm").show();
             }).catch(function(error) {
-                $("#loginForm").show();
+                showLoginForm();
                 $("#updatePasswordForm").hide();
                 $("#confirmUserForm").hide();
             });
@@ -67,7 +111,6 @@ function validateAndSubmitConfirmUser(event) {
 
 function do_login() {
     resettingForm = false;
-    $("#new_email").show();         
 
     ajaxRequest({
         type: 'POST',
@@ -75,13 +118,14 @@ function do_login() {
         contentType: 'application/json',  // Set content type to JSON
         data: JSON.stringify({ username: $('#username').val(), password: $('#password').val() }),   // Send the form data as JSON
         success: function (response) {  
-            localStorage.setItem('token', response.token );    
+            localStorage.setItem('token', response.token );
 
             if(response.validated === false) {
                 $('#password').val("");
                 $("#loginForm").hide();
                 $("#updatePasswordForm").show();
                 $("#confirmUserForm").hide();
+                showNewEmail();             
             }
             else {          
                 navigateTo(AppSession.lastPageRequested ? AppSession.lastPageRequested : 'customers');
@@ -139,10 +183,8 @@ function send_reset_email() {
                     
             $("#loginForm").hide();
             $("#updatePasswordForm").hide();
-            $("#confirmUserForm").show();
-              
-            resettingForm = false;
-            $("#new_email").show(); 
+            $("#confirmUserForm").show();              
+            showNewEmail(); 
 
             setTimeout(function () {
                 $('#success-message').fadeOut();
@@ -168,14 +210,15 @@ function validate_user() {
         headers: { 'Authorization': localStorage.getItem('token') },
         data: JSON.stringify({ otp: $('#confirm_otp').val() }),   // Send the form data as JSON
         success: function (response) { 
-            if(resettingForm){
+            if(resettingForm) {
                 resettingForm = false;   
-                $("#new_email").show();                
 
-                $('#success-message').text("Password reimpostata correttamente").show();
-                        
-                $("#confirm_otp").val();
-                $("#loginForm").show();
+                showNewEmail();                
+                $('#success-message').text("Password reimpostata correttamente").show();                        
+                $("#confirm_otp").val("");
+
+                showLoginForm();
+
                 $("#updatePasswordForm").hide();
                 $("#confirmUserForm").hide();
 
@@ -206,7 +249,7 @@ function validate_user() {
                                 $('#error-message').text(errorMessage).show(); 
         
                                 if((xhr.responseJSON.restart) && (xhr.responseJSON.restart === true)) {
-                                    $("#loginForm").show();
+                                    showLoginForm();
                                     $("#updatePasswordForm").hide();
                                     $("#confirmUserForm").hide();
                                 }
@@ -223,7 +266,7 @@ function validate_user() {
                         $('#error-message').text(errorMessage).show();
         
                         if(xhr.responseJSON.restart === true) {
-                            $("#loginForm").show();
+                            showLoginForm();
                             $("#updatePasswordForm").hide();
                             $("#confirmUserForm").hide();
                         }
@@ -243,7 +286,7 @@ function validate_user() {
             $('#confirm_otp').val("");
 
             if(xhr.responseJSON.restart === true) {
-                $("#loginForm").show();
+                showLoginForm();
                 $("#updatePasswordForm").hide();
                 $("#confirmUserForm").hide();
             }
@@ -256,7 +299,7 @@ function validate_user() {
 
 function initLogin() {
     resettingForm = false;   
-    $("#new_email").show();          
+    //showNewEmail();          
                            
     $(document).ready(function() {               
         $('#loginForm').on('submit', function(event) {
@@ -273,5 +316,7 @@ function initLogin() {
             event.preventDefault();
             validateAndSubmitConfirmUser(event);
         });
+
+        showLoginForm();
     });
 }
