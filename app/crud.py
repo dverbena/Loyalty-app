@@ -1,6 +1,9 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, aliased
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
-from sqlalchemy import and_, extract
+from sqlalchemy import select, and_, extract, func, case, Integer, literal_column
+from sqlalchemy.sql import select, text, column, and_, over
+from sqlalchemy.sql.functions import sum as sql_sum
+
 from datetime import datetime, timezone
 from app.models import *
 from app.utils import generate_qr_code
@@ -117,14 +120,78 @@ def log_access(db: Session, identifier, imported: bool, reward: bool, commit: bo
 
     return customer  # Return customer details for confirmation
 
+#def get_access_logs_without_imported(db: Session, customer_id: int = None):
+#    with db:
+#        query = db.query(AccessLog)
+
+#        if customer_id:
+#            query = query.filter((AccessLog.customer_id == customer_id) & (AccessLog.is_imported == False))
+
+#    return query
+
 def get_access_logs_without_imported(db: Session, customer_id: int = None):
-    with db:
-        query = db.query(AccessLog)
+    # Fetch all logs for the customer, ordered by access_time
+    query = db.query(AccessLog).filter(AccessLog.customer_id == customer_id).order_by(AccessLog.access_time.asc())
+    all_logs = query.all()
 
-        if customer_id:
-            query = query.filter((AccessLog.customer_id == customer_id) & (AccessLog.is_imported == False))
+    result = []
+    counter = 0
+    reset = False
 
-    return query
+    for log in all_logs:
+        # Reset counter after a reward row
+        if reset:
+            counter = 1 if not log.is_reward else 0
+            reset = False
+        elif not log.is_reward:
+            counter += 1
+        else:
+            counter = 0
+
+        # Mark next row to reset if current is a reward
+        if log.is_reward:
+            reset = True
+
+        # Only return rows where is_imported == False, but still compute counter using all
+        if not log.is_imported:
+            # Attach the computed counter as an extra attribute
+            log.num = counter
+            result.append(log)
+
+    return result
+
+def get_last_access_log_number(db: Session, customer_id: int) -> int:
+    # Fetch all access logs for the customer (ordered by access_time)
+    logs = (
+        db.query(AccessLog)
+        .filter(AccessLog.customer_id == customer_id)
+        .order_by(AccessLog.access_time)
+        .all()
+    )
+
+    counter = 0
+    last_number = None
+    last_time = None
+
+    for log in logs:
+        print(f"log.is_reward: {log.is_reward}, log.access_time: {log.access_time}")
+
+        if log.is_reward:
+            counter = 0
+        else:
+            counter += 1
+        
+        number = counter
+
+        # Update only if this log is more recent than the previous one
+        if last_time is None or log.access_time > last_time:
+            last_number = number
+            last_time = log.access_time
+
+    if last_number is None: 
+        return -1
+        
+    return last_number
 
 def get_programs(db: Session, skip: int = 0, limit: int = 10):
     with db:
@@ -191,7 +258,7 @@ def is_reward_due(db: Session, customer_id: int) -> RewardDue:
         
         if not programs:
             logger.debug(f"No enrollment in any program found for customer {customer_id} in {current_year}")
-            return RewardDue(customer_id, "Nussun programma", False)    
+            return RewardDue(customer_id, "Nessun programma", False)    
         else:
             program = programs[0]
             logger.debug(f"Program found: {program.name}")

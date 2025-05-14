@@ -1,4 +1,3 @@
-docker compose down loyalty-app
-docker compose up loyalty-app --build -d
-docker tag loyalty-app danyver/loyalty-app:latest
-docker push danyver/loyalty-app:latest
+docker buildx create --use --name multiarch-builder
+docker buildx inspect --bootstrap
+docker buildx build --platform linux/amd64,linux/arm64 -t danyver/loyalty-app:latest --push .

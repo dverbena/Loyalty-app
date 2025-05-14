@@ -83,6 +83,7 @@ def list_customers(current_user):
         "address": customer.address,
         "qr_code": customer.qr_code,
         "created_at": customer.created_at.isoformat(),
+        "last_access": get_last_access_log_number(db, customer.id)
     } for customer in customers]
 
     return jsonify({
@@ -113,7 +114,8 @@ def get_customer_by_id(current_user, id):
         "email": customer.email,
         "address": customer.address,
         "qr_code": customer.qr_code,
-        "created_at": customer.created_at
+        "created_at": customer.created_at,
+        "last_access": get_last_access_log_number(db, customer.id)
     }), 200
 
 @bp.route("/qr/<qr_code>", methods=["GET"])
@@ -145,7 +147,8 @@ def get_customer_by_qr(current_user, qr_code):
         "email": customer.email,
         "address": customer.address,
         "qr_code": customer.qr_code,
-        "created_at": customer.created_at
+        "created_at": customer.created_at,
+        "last_access": get_last_access_log_number(db, customer.id)
     }), 200
 
 @bp.route("/search", methods=["GET"])
@@ -196,7 +199,8 @@ def get_customers_by_name(current_user):
         "email": customer.email,
         "address": customer.address,
         "qr_code": customer.qr_code,
-        "created_at": customer.created_at
+        "created_at": customer.created_at,
+        "last_access": get_last_access_log_number(db, customer.id)
     } for customer in customers]), 200
 
 @bp.route("/add", methods=["POST"])
@@ -356,7 +360,6 @@ def send_email_with_attachment_and_inline_image(to_email, attachment):
         server.starttls()
         server.login(smtp_user, smtp_password)
         server.send_message(message)
-
 
 @bp.route('/send-qr-code', methods=['POST'])
 @token_required

@@ -89,6 +89,8 @@ function handleAction(action, id, name, last_name) {
                         success: function (response) {
                             if(responseReward.reward_due) sendRewardMessageToCustomersPage();
                             else sendMessageToCustomersPage(`Check in di ${response.customer.name} ${response.customer.last_name} (${responseReward.program}) riuscito!`);
+                            
+                            customersTable.ajax.reload(null, false); // 'false' prevents resetting the pagination
                         },
                         error: function (xhr, status, error) {
                             sendErrorMessageToCustomersPage("Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : ""))
@@ -190,7 +192,17 @@ function handleAction(action, id, name, last_name) {
                     language: {
                         url: 'https://cdn.datatables.net/plug-ins/2.2.1/i18n/it-IT.json',
                     },
-                    columns: [                    
+                    columns: [                        
+                        { 
+                            data: 'num',
+                            orderable: false,
+                            render: function(data, type, row, meta) {
+                                if (row.num == -1) return '';
+                                if (row.num == 0) return '<i class="fas fa-gift"></i>';
+
+                                return row.num;
+                            }
+                        },
                         { 
                             data: 'access_time', 
                             render: function(data, type, row, meta) {
@@ -319,9 +331,20 @@ function loadCustomers() {
                 orderable: false // Disable sorting for the first column
             },
             { data: 'name', width: '25%' },
-            { data: 'last_name', width: '25%' },
+            { data: 'last_name', width: '20%' },
             { data: 'email', width: '20%' },
             { data: 'address', width: '30%' },
+            { 
+                data: 'last_access', 
+                width: '5%', 
+                orderable: false,
+                render: function(data, type, row, meta) {
+                    if (row.last_access == -1) return '';
+                    if (row.last_access == 0) return '<i class="fas fa-gift"></i>';
+
+                    return row.last_access;
+                }
+            },
             //{ data: 'qr_code' },
             //{ data: 'created_at' }
         ],
