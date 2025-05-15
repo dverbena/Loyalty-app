@@ -79,7 +79,7 @@ def create_app():
     app.register_blueprint(users.bp)  
     
     app.secret_key = os.urandom(24)
-    app.config['DEBUG'] = True
+    app.config['DEBUG'] = os.getenv("FLASK_ENV", "production") == "development"
     
     app.jinja_env.filters['format_date'] = format_db_date
     app.jinja_env.filters['lighten'] = lighten_color

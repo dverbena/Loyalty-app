@@ -8,3 +8,4 @@ requests
 pillow
 werkzeug
 PyJWT
+gunicorn
