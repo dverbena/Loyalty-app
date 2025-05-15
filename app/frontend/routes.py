@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, jsonify
 import requests
 import os
 import logging
+import time
 from app.utils import token_required
 
 # Initialize logger
@@ -20,7 +21,7 @@ theme_color = os.getenv("THEME_COLOR", "#ffffff")  # Default to white if not set
 @bp.route('/')
 def serve_spa():    
     # Serve the main entry point for the SPA
-    return render_template("index.html", theme_color=theme_color, app_title=app_title)
+    return render_template("index.html", theme_color=theme_color, app_title=app_title, time=int(time.time()))
 
 # Admin page handler (example of backend interaction)
 @bp.route('/new_customer', methods=['GET', 'POST'])
