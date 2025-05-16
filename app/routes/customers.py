@@ -45,8 +45,8 @@ def list_customers(current_user):
 
         # Define column mapping for ordering
         column_mapping = {
-            1: 'name',
-            2: 'last_name',
+            1: 'last_name',
+            2: 'name',
             3: 'email',
             4: 'address'
         }

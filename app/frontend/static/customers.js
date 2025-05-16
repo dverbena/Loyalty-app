@@ -357,7 +357,7 @@ function loadCustomers() {
             [5, 10, 25, 50, 100]
         ],
         pageLength: 25,
-        order: [['2', 'asc']] // Default ordering
+        order: [['1', 'asc']] // Default ordering
     });
 }
 
