@@ -57,7 +57,7 @@ function populateProgramsForCustomer() {
 
         // Fetch programs from the API
         ajaxRequest({
-            url: "/programs/current",
+            url: "/programs/not_past",
             method: "GET",
             dataType: "json",
             headers: { 'Authorization': localStorage.getItem('token') },

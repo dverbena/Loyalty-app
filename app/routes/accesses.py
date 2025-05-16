@@ -88,7 +88,7 @@ def get_access_logs_endpoint(current_user, id):
             return jsonify({"error": "Customer not found"}), 404
 
         # get all filtered logs as list
-        logs = get_access_logs_without_imported(db, id)
+        logs = get_access_logs(db, id)
 
         # Sort logs manually (because it's a list now)
         reverse = (order_direction == 'desc')
@@ -116,29 +116,6 @@ def get_access_logs_endpoint(current_user, id):
             "recordsFiltered": total_records if not search_value else len(data),
             "data": data
         })
-
-#@bp.route("/customer/qr/<qr_code>", methods=["GET"])
-#@token_required
-#def get_access_logs_by_qr(current_user, qr_code):
-#    logger.info(f"Fetching accesses for QR code: {qr_code}")
-
-#    with next(get_db()) as db:
-#        customer = db.query(Customer).filter(Customer.qr_code == qr_code).first()
-
-#    if not customer:
-#        logger.error(f"Customer not found for QR code: {qr_code}")
-#        return jsonify({"error": "Customer not found"}), 404
-
-#    logs = get_access_logs_without_imported(db, id)
-#    logger.debug(f"Fetched {len(logs)} accesses for customer with QR code: {qr_code}")
-
-#    return jsonify([{
-#        "id": log.id,
-#        "customer_id": log.customer_id,
-#        "imported": log.is_imported,
-#        "reward": log.is_reward,
-#        "access_time": log.access_time
-#    } for log in logs]), 200
 
 @bp.route("/reward_due/<cid>", methods=["GET"])
 @token_required

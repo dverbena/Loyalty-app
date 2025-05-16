@@ -75,16 +75,21 @@ def list_customers(current_user):
     logger.debug(f"Fetched {len(customers)} customers from the database.")
     
     # Build response
-    data = [{
-        "id": customer.id,
-        "name": customer.name,
-        "last_name": customer.last_name,
-        "email": customer.email,
-        "address": customer.address,
-        "qr_code": customer.qr_code,
-        "created_at": customer.created_at.isoformat(),
-        "last_access": get_last_access_log_number(db, customer.id)
-    } for customer in customers]
+    data = []
+    for customer in customers:
+        programs = get_customer_current_programs(db, customer.id)
+
+        data.append({
+            "id": customer.id,
+            "name": customer.name,
+            "last_name": customer.last_name,
+            "email": customer.email,
+            "address": customer.address,
+            "qr_code": customer.qr_code,
+            "created_at": customer.created_at.isoformat(),
+            "last_access": get_last_access_log_number(db, customer.id),
+            "program": programs[0].name if programs else ""
+        })
 
     return jsonify({
         "draw": int(request.args.get('draw', 1)),
@@ -107,6 +112,8 @@ def get_customer_by_id(current_user, id):
     
     logger.info(f"Found customer: {customer.name} {customer.last_name}")
 
+    programs = get_customer_current_programs(db, customer.id)
+
     return jsonify({
         "id": customer.id,
         "name": customer.name,
@@ -115,7 +122,8 @@ def get_customer_by_id(current_user, id):
         "address": customer.address,
         "qr_code": customer.qr_code,
         "created_at": customer.created_at,
-        "last_access": get_last_access_log_number(db, customer.id)
+        "last_access": get_last_access_log_number(db, customer.id),
+        "program": programs[0].name if programs else ""
     }), 200
 
 @bp.route("/qr/<qr_code>", methods=["GET"])
@@ -140,6 +148,9 @@ def get_customer_by_qr(current_user, qr_code):
 
     logger.info(f"Found customer: {customer.name} {customer.last_name}")
 
+    
+    programs = get_customer_current_programs(db, customer.id)
+
     return jsonify({
         "id": customer.id,
         "name": customer.name,
@@ -148,7 +159,8 @@ def get_customer_by_qr(current_user, qr_code):
         "address": customer.address,
         "qr_code": customer.qr_code,
         "created_at": customer.created_at,
-        "last_access": get_last_access_log_number(db, customer.id)
+        "last_access": get_last_access_log_number(db, customer.id),
+        "program": programs[0].name if programs else ""
     }), 200
 
 @bp.route("/search", methods=["GET"])
@@ -192,16 +204,21 @@ def get_customers_by_name(current_user):
     
     logger.info(f"Found {len(customers)} customers matching the search criteria.")
 
-    return jsonify([{
-        "id": customer.id,
-        "name": customer.name,
-        "last_name": customer.last_name,
-        "email": customer.email,
-        "address": customer.address,
-        "qr_code": customer.qr_code,
-        "created_at": customer.created_at,
-        "last_access": get_last_access_log_number(db, customer.id)
-    } for customer in customers]), 200
+    data = []
+    for customer in customers:
+        programs = get_customer_current_programs(db, customer.id)
+
+        data.append({
+            "id": customer.id,
+            "name": customer.name,
+            "last_name": customer.last_name,
+            "email": customer.email,
+            "address": customer.address,
+            "qr_code": customer.qr_code,
+            "created_at": customer.created_at.isoformat(),
+            "last_access": get_last_access_log_number(db, customer.id),
+            "program": programs[0].name if programs else ""
+        })
 
 @bp.route("/add", methods=["POST"])
 @token_required

@@ -169,7 +169,7 @@ function loadPrograms() {
             [5, 10, 25, 50, 100],
             [5, 10, 25, 50, 100]
         ],
-        pageLength: 10,
+        pageLength: 25,
         order: [[1, 'asc']] // Default ordering
     });
 }

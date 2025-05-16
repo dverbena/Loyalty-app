@@ -68,6 +68,26 @@ def list_programs(current_user):
         "data": data
     })
 
+@bp.route("/not_past", methods=["GET"])
+@token_required
+def list_not_past_programs(current_user):
+    logger.info("Received request to list all not past programs.")
+
+    db = next(get_db())
+    programs = get_not_past_programs(db)
+    
+    logger.debug(f"Fetched {len(programs)} not past programs from the database.")
+
+    return jsonify([{
+        "id": program.id,
+        "name": program.name,
+        "valid_from": program.valid_from,
+        "valid_to": program.valid_to,
+        "num_access_to_trigger": program.num_access_to_trigger,
+        "num_accesses_reward": program.num_accesses_reward,
+        "created_at": program.created_at
+    } for program in programs])
+
 @bp.route("/current", methods=["GET"])
 @token_required
 def list_current_programs(current_user):

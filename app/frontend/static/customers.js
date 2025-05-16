@@ -198,7 +198,8 @@ function handleAction(action, id, name, last_name) {
                             orderable: false,
                             render: function(data, type, row, meta) {
                                 if (row.num == -1) return '';
-                                if (row.num == 0) return '<i class="fas fa-gift"></i>';
+                                if (row.reward) return '<i title="Premio" class="fas fa-gift"></i>';
+                                if (row.imported) return '<i title="Importato" class="fas fa-file-import"></i>';
 
                                 return row.num;
                             }
@@ -214,8 +215,8 @@ function handleAction(action, id, name, last_name) {
                         [10, 25, 50, 100],
                         [10, 25, 50, 100]
                     ],
-                    pageLength: 10,
-                    //order: [[1, 'desc']] // Default ordering
+                    pageLength: 25,
+                    order: [[1, 'desc']] // Default ordering
                 });
             }
 
@@ -330,17 +331,20 @@ function loadCustomers() {
                 },
                 orderable: false // Disable sorting for the first column
             },
-            { data: 'name', width: '25%' },
             { data: 'last_name', width: '20%' },
+            { data: 'name', width: '25%' },
             { data: 'email', width: '20%' },
-            { data: 'address', width: '30%' },
+            { 
+                data: 'program', width: '30%', 
+                orderable: false
+            },
             { 
                 data: 'last_access', 
                 width: '5%', 
                 orderable: false,
                 render: function(data, type, row, meta) {
                     if (row.last_access == -1) return '';
-                    if (row.last_access == 0) return '<i class="fas fa-gift"></i>';
+                    if (row.last_access == 0) return '<i title="Premio" class="fas fa-gift"></i>';
 
                     return row.last_access;
                 }
@@ -352,8 +356,8 @@ function loadCustomers() {
             [5, 10, 25, 50, 100],
             [5, 10, 25, 50, 100]
         ],
-        pageLength: 10,
-        order: [[1, 'asc']] // Default ordering
+        pageLength: 25,
+        order: [['2', 'asc']] // Default ordering
     });
 }
 

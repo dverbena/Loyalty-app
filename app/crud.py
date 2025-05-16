@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy.exc import SQLAlchemyError, NoResultFound
-from sqlalchemy import select, and_, extract, func, case, Integer, literal_column
+from sqlalchemy import select, and_, or_, extract, func, case, Integer, literal_column
 from sqlalchemy.sql import select, text, column, and_, over
 from sqlalchemy.sql.functions import sum as sql_sum
 
@@ -120,16 +120,7 @@ def log_access(db: Session, identifier, imported: bool, reward: bool, commit: bo
 
     return customer  # Return customer details for confirmation
 
-#def get_access_logs_without_imported(db: Session, customer_id: int = None):
-#    with db:
-#        query = db.query(AccessLog)
-
-#        if customer_id:
-#            query = query.filter((AccessLog.customer_id == customer_id) & (AccessLog.is_imported == False))
-
-#    return query
-
-def get_access_logs_without_imported(db: Session, customer_id: int = None):
+def get_access_logs(db: Session, customer_id: int = None):
     # Fetch all logs for the customer, ordered by access_time
     query = db.query(AccessLog).filter(AccessLog.customer_id == customer_id).order_by(AccessLog.access_time.asc())
     all_logs = query.all()
@@ -151,12 +142,9 @@ def get_access_logs_without_imported(db: Session, customer_id: int = None):
         # Mark next row to reset if current is a reward
         if log.is_reward:
             reset = True
-
-        # Only return rows where is_imported == False, but still compute counter using all
-        if not log.is_imported:
-            # Attach the computed counter as an extra attribute
-            log.num = counter
-            result.append(log)
+        
+        log.num = counter if not log.is_imported else -10
+        result.append(log)
 
     return result
 
@@ -211,6 +199,22 @@ def get_current_programs(db: Session, skip: int = 0, limit: int = 10):
     
     return programs
 
+def get_not_past_programs(db: Session, skip: int = 0, limit: int = 10):
+    now = datetime.now().date()
+    
+    with db:
+        programs = db.query(Program).filter(
+            or_ (
+                and_(                
+                    Program.valid_from <= now,
+                    Program.valid_to > now
+                ),
+                Program.valid_from > now
+            )
+        ).order_by(Program.valid_to.desc()).all()
+    
+    return programs
+
 def create_program(db: Session, name: str, valid_from: date, valid_to: date, num_access_to_trigger: int, num_accesses_reward: int):
     try:
         # Start transaction
@@ -243,6 +247,22 @@ def get_customer_programs_for_current_year(db: Session, customer_id: int):
             Customer.id == customer_id,  # Filter by customer_id
             extract('year', Program.valid_from) <= current_year,  # Filter programs valid from the current year
             extract('year', Program.valid_to) >= current_year  # Filter programs valid to the current year
+        ).all()
+
+    return programs
+    
+def get_customer_current_programs(db: Session, customer_id: int):    
+    now = datetime.now(timezone.utc)
+    
+    # Query to join Customer and Program and filter by customer_id and current year
+    # return db_session.query(Customer.name, Customer.last_name, Program.name).join( # using projection
+    with db:
+        programs = db.query(Program).join(
+            Program.customers
+        ).filter(
+            Customer.id == customer_id,  # Filter by customer_id
+            Program.valid_from <= now,  # Filter programs valid from the current year
+            Program.valid_to >= now  # Filter programs valid to the current year
         ).all()
 
     return programs
