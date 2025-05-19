@@ -3,8 +3,8 @@ function initNewCustomer() {
         $('#customerForm').on('submit', function(event) {
             event.preventDefault();
             validateAndSubmitNewCustomer(event);
-        });
-        
+        });                
+
         populateProgramsForCustomer();
         
         if(AppSession.customerBeingEdited) {
@@ -115,17 +115,22 @@ function validateAndSubmitNewCustomer(event) {
 
     // Use the built-in form validation API
     if (form.checkValidity()) {
-        submit_new_or_modify_customer();
-    } else {
+        const selectedPrograms = Array.from(document.getElementById("programs").selectedOptions).map((option) => option.value);
+
+        if (selectedPrograms.length === 0) 
+            $('#noProgramsModal').modal('show');     
+        else
+            submit_new_or_modify_customer(selectedPrograms);
+    } 
+    else {
         // Show validation errors
         form.reportValidity();
     }
 }
 
-function submit_new_or_modify_customer() {
-    const selectedPrograms = Array.from(document.getElementById("programs").selectedOptions).map(
-        (option) => option.value
-    );
+function submit_new_or_modify_customer(selectedPrograms) {
+    if(!selectedPrograms)
+        selectedPrograms = Array.from(document.getElementById("programs").selectedOptions).map((option) => option.value);
 
     var formData = {
         name: $('#name').val(),
@@ -135,17 +140,17 @@ function submit_new_or_modify_customer() {
         programs: selectedPrograms
     };
 
-    if(!AppSession.customerBeingEdited)        
+    if (!AppSession.customerBeingEdited)
         formData.access_import = parseInt($('#access_import').val());
-
+    
     ajaxRequest({
         type: AppSession.customerBeingEdited ? 'PUT' : 'POST',
         url: AppSession.customerBeingEdited ? `customers/edit/${AppSession.customerBeingEdited}` : '/customers/add',
         contentType: 'application/json',  // Set content type to JSON
         data: JSON.stringify(formData),   // Send the form data as JSON
         headers: { 'Authorization': localStorage.getItem('token') },
-        success: function (response) {   
-            if((!AppSession.customerBeingEdited) || (response.email_changed)) {
+        success: function (response) {
+            if ((!AppSession.customerBeingEdited) || (response.email_changed)) {
                 ajaxRequest({
                     type: 'POST',
                     url: 'customers/send-qr-code',
@@ -153,18 +158,17 @@ function submit_new_or_modify_customer() {
                     contentType: 'application/json',  // Set content type to JSON
                     data: `{"id": ${response.id}}`  // Send the form data as JSON
                 });
-            }            
-            
+            }
+
             // If the customer is updated successfully, redirect to the customer list or show a success message
-            if(AppSession.customerBeingEdited) {
+            if (AppSession.customerBeingEdited) {
                 AppSession.customerBeingEdited = null;
                 sendMessageToCustomersPage(`Socio ${formData.name} ${formData.last_name} modificato correttamente`);
                 navigateTo('customers');
             }
-            else
-            {
+            else {
                 $("#success-message").text(`Socio ${formData.name} ${formData.last_name} creato correttamente`).show();
-                                   
+
                 $('#name').val("");
                 $('#last_name').val("");
                 $('#email').val("");
@@ -178,7 +182,7 @@ function submit_new_or_modify_customer() {
         },
         error: function (xhr, status, error) {
             // If there is an error, display the error message on the page
-            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error? xhr.responseJSON.error : "");
+            errorMessage = "Errore: " + (xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "");
             $('#error-message').text(errorMessage).show();
 
             setTimeout(function () {
