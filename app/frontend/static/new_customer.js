@@ -174,6 +174,7 @@ function submit_new_or_modify_customer(selectedPrograms) {
                 $('#email').val("");
                 $('#address').val("");
                 $('#programs').val("").trigger('change');
+                $('#access_import').val("0");
 
                 setTimeout(() => {
                     $('#success-message').fadeOut();
